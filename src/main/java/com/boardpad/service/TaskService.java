@@ -29,4 +29,23 @@ public class TaskService {
 		return repository.save(task);
 	}
 	
+	public Task updata(Long id,Task task) {
+		Task entity = getById(id);
+		
+		updateData(task, entity);
+		
+		return repository.save(entity);
+	}
+	
+	private void updateData(Task task, Task entity) {
+		entity.setTitle(task.getTitle());
+		entity.setCategory(task.getCategory());
+		entity.setDescription(task.getDescription());
+		entity.setStatus(task.getStatus());
+	}
+	
+	public void delete(Long id) {
+		repository.deleteById(id);
+	}
+	
 }

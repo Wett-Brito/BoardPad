@@ -11,8 +11,6 @@ import com.boardpad.entity.Task;
 import com.boardpad.repository.BoardRespository;
 import com.boardpad.utils.CodeGenerator;
 
-import net.bytebuddy.implementation.bytecode.Throw;
-
 @Service
 public class BoardService {
 
@@ -82,6 +80,18 @@ public class BoardService {
 		}
 		
 		throw new RuntimeException();
+	}
+	
+	public Board update(Board board) {
+		Board entity = findByCode(board.getCode());
+		
+		updateData(board, entity);
+		
+		return entity;
+	}
+	
+	private void updateData(Board board, Board entity) {
+		entity.setName(board.getName());
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,4 +52,10 @@ public class BoardController {
 		return ResponseEntity.created(uri).body(obj);
 	}
 	
+	@PutMapping(value = "/{code}")
+	public ResponseEntity<Board> update(@PathVariable String code, @RequestBody Board board){
+		board.setCode(code);
+		Board obj = service.update(board);
+		return ResponseEntity.ok().body(obj);
+	}
 }
