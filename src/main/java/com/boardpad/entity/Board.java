@@ -35,6 +35,13 @@ public class Board implements Serializable{
 	@OneToMany(mappedBy = "board")
 	List<Task> tasks = new ArrayList<>();
 
+	public Board(String code, String name) {
+		super();
+		this.code = code;
+		this.name = name;
+		
+	}
+	
 	public Board(Long id, String code, String name) {
 		super();
 		this.id = id;

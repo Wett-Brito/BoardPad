@@ -40,6 +40,15 @@ public class Task implements Serializable{
 		
 	}
 	
+	public Task( String title, String category, String description, StatusTask status, Board board) {
+		super();
+		this.title = title;
+		this.category = category;
+		this.description = description;
+		this.status = status;
+		this.board = board;
+	}
+	
 	public Task(Long id, String title, String category, String description, StatusTask status, Board board) {
 		super();
 		this.id = id;

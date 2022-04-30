@@ -21,9 +21,12 @@ public class TaskService {
 	
 	
 	public Task getById(Long id){
-		System.out.println(id);
 		Optional<Task> obj =  repository.findById(id);
 		return obj.get();
+	}
+	
+	public Task insert(Task task) {
+		return repository.save(task);
 	}
 	
 }
