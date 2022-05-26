@@ -6,10 +6,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController
@@ -31,7 +36,7 @@ public class StatusController {
     @GetMapping
     public ResponseEntity<List<StatusDto>> listAllStatus() {
         List<StatusDto> statusList = statusService.listAllStatus();
-        return (statusList.size() > 0)? ResponseEntity.ok().body(statusList) :
+        return (statusList.size() > 0) ? ResponseEntity.ok().body(statusList) :
                 ResponseEntity.noContent().build();
     }
 
@@ -42,18 +47,24 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PostMapping
-    public StatusDto createNewStatus (@RequestBody String statusName) {
+    public StatusDto createNewStatus(@RequestBody String statusName) {
         return statusService.createNewStatus(statusName);
     }
 
     @ApiOperation(value = "Deletes a status")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Request error"),
+            @ApiResponse(code = 400, message = "Error, please delete this status tasks before delete this status"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @DeleteMapping(path = "{id}")
-    public void deleteStatus (@PathVariable("id") Long idStatus) {
-        statusService.deleteStatus(idStatus);
+    public ResponseEntity<String> deleteStatus(@PathVariable("id") Long idStatus) {
+        try {
+            statusService.deleteStatus(idStatus);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Para remover essa coluna de status você deve primeiro remover suas tarefas.");
+        }
     }
 }

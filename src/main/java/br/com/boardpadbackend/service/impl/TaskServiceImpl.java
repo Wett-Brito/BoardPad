@@ -4,17 +4,15 @@ import br.com.boardpadbackend.converters.TaskDtoConverter;
 import br.com.boardpadbackend.converters.TaskInputDtoConverter;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
-import br.com.boardpadbackend.entity.CategoryEntity;
-import br.com.boardpadbackend.entity.StatusEntity;
 import br.com.boardpadbackend.entity.TaskEntity;
-import br.com.boardpadbackend.entity.projections.TaskProjection;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,16 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Override
     public TaskDto createTask(TaskInputDto inputTask) {
-        TaskEntity newTask = taskRepository.save(taskInputDtoConverter.dtoToEntity(inputTask));
-        return taskDtoConverter.entityToDto(newTask);
+        try {
+            TaskEntity newTask =  taskRepository.save(taskInputDtoConverter.dtoToEntity(inputTask));
+            return taskDtoConverter.entityToDto(newTask);
+        }
+        catch(Exception ex) {
+            if(ex instanceof SQLIntegrityConstraintViolationException){
+                throw new RuntimeException("Erro ao encontrar");
+            }
+            return null;
+        }
+
     }
 }

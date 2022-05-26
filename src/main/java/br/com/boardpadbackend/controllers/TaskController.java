@@ -2,7 +2,6 @@ package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
-import br.com.boardpadbackend.entity.projections.TaskProjection;
 import br.com.boardpadbackend.service.TaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
