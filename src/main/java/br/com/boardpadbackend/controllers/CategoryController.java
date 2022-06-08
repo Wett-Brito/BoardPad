@@ -51,12 +51,14 @@ public class CategoryController {
     }
     @ApiOperation("Delete a task Category")
     @ApiResponses({
-            @ApiResponse( code= 200, message = "Category deleted successfully"),
+            @ApiResponse( code= 204, message = "Category deleted successfully"),
             @ApiResponse( code= 500, message = "Internal Server Error. Category wasn't deleted.")
     })
     @DeleteMapping("{id}")
-    public void deleteCategoryById (@PathVariable("id") Long idCategory) {
+    public ResponseEntity<Void> deleteCategoryById (@PathVariable("id") Long idCategory) {
         categoryService.deleteCategoryById(idCategory);
+        
+        return ResponseEntity.noContent().build();
     }
 
 }

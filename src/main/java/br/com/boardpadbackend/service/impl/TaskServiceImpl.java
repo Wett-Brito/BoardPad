@@ -1,5 +1,15 @@
 package br.com.boardpadbackend.service.impl;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
+
 import br.com.boardpadbackend.converters.TaskDtoConverter;
 import br.com.boardpadbackend.converters.TaskInputDtoConverter;
 import br.com.boardpadbackend.dto.TaskDto;
@@ -7,14 +17,6 @@ import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import br.com.boardpadbackend.entity.TaskEntity;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.TaskService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -56,5 +58,15 @@ public class TaskServiceImpl implements TaskService {
             return null;
         }
 
+    }
+    
+    @Transactional
+    @Override
+    public void deleteTask(Long taskId) {
+    	try {
+    		taskRepository.deleteById(taskId);
+    	}catch (EmptyResultDataAccessException e) {
+    		throw new RuntimeException("Erro ao encontrar ID da task para deletar");
+    	}
     }
 }

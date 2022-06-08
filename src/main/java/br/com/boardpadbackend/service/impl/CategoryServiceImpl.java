@@ -3,6 +3,7 @@ package br.com.boardpadbackend.service.impl;
 import br.com.boardpadbackend.dto.CategoryDto;
 import br.com.boardpadbackend.entity.CategoryEntity;
 import br.com.boardpadbackend.repositories.CategoryRepository;
+import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,14 +11,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
+    private TaskRepository taskRepository;
+
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, TaskRepository taskRepository) {
         this.categoryRepository = categoryRepository;
+        this.taskRepository = taskRepository;
+
     }
 
     @Override
@@ -40,8 +47,10 @@ public class CategoryServiceImpl implements CategoryService {
                 .build();
     }
 
+    @Transactional
     @Override
     public void deleteCategoryById(Long idCategory) {
+    	taskRepository.updateTaskCategoryToNull(idCategory);
         categoryRepository.deleteById(idCategory);
     }
 }

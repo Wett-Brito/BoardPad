@@ -1,22 +1,28 @@
 package br.com.boardpadbackend.controllers;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.boardpadbackend.dto.StatusDto;
 import br.com.boardpadbackend.service.StatusService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.models.Response;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
-import java.util.List;
 
 @Log4j2
 @RestController
@@ -55,7 +61,7 @@ public class StatusController {
 
     @ApiOperation(value = "Deletes a status")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 204, message = "Status deleted successfully"),
             @ApiResponse(code = 400, message = "Error, please delete this status tasks before delete this status"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
@@ -63,10 +69,10 @@ public class StatusController {
     public ResponseEntity<String> deleteStatus(@PathVariable("id") Long idStatus) {
         try {
             statusService.deleteStatus(idStatus);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (DataIntegrityViolationException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Para remover essa coluna de status você deve primeiro remover suas tarefas.");
+                    .body("Para remover essa coluna de status voce deve primeiro remover suas tarefas.");
         }
     }
 

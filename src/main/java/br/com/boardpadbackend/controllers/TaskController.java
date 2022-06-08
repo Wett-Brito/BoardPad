@@ -54,4 +54,21 @@ public class TaskController {
     public void updateTask (@PathVariable("id") Long taskId, @RequestParam("newStatusId") Long newStatusId) {
         taskService.updateStatusTask(taskId, newStatusId);
     }
+    
+    @ApiOperation("Delete tasks")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Task deleted successfully"),
+            @ApiResponse(code = 500, message = "Internal server error. Task wasn't deleted")
+    })
+    @DeleteMapping(path = "{id}")
+    public ResponseEntity<Void> deleteTask (@PathVariable("id") Long taskId) {
+        taskService.deleteTask(taskId);
+        
+        return ResponseEntity.noContent().build();
+    }
+    
+    
+    
+    
+    
 }

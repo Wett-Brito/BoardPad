@@ -1,12 +1,12 @@
 package br.com.boardpadbackend.repositories;
 
-import br.com.boardpadbackend.entity.TaskEntity;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.transaction.Transactional;
-import java.util.List;
+import br.com.boardpadbackend.entity.TaskEntity;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     @Query("SELECT task FROM TaskEntity task " +
@@ -21,4 +21,9 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     @Modifying
     @Query(value = "DELETE FROM TaskEntity task WHERE task.statusEntity.idStatus = :idStatus")
     void deleteAllByStatusEntityIdStatus(Long idStatus);
+    
+    @Modifying
+    @Query("UPDATE TaskEntity task SET task.categoryEntity.idCategory = null WHERE task.categoryEntity.idCategory = :idCantegory ")
+    void updateTaskCategoryToNull(Long idCantegory);
+    
 }
