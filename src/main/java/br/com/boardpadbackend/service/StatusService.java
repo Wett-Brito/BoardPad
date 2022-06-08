@@ -10,4 +10,6 @@ public interface StatusService {
     StatusDto createNewStatus(String statusName);
 
     void deleteStatus(Long idStatus);
+
+    void updateStatusName(Long idStatus, String newStatusName) ;
 }

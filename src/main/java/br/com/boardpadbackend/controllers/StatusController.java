@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.models.Response;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequestMapping("/status")
 @Api(value = "Status", tags = {"Status"})
@@ -65,6 +67,24 @@ public class StatusController {
         } catch (DataIntegrityViolationException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Para remover essa coluna de status você deve primeiro remover suas tarefas.");
+        }
+    }
+
+    @ApiOperation(value = "Updates the status name")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Server error, please try later.")
+    })
+    @PutMapping(path = "{id}")
+    public ResponseEntity<?> updateStatusName (@PathVariable("id") Long idStatus, @RequestParam(name = "new-name") String newStatusName) {
+        try {
+            statusService.updateStatusName(idStatus, newStatusName);
+            return ResponseEntity.ok().body("Atualizado com sucesso!");
+        }catch(Exception ex){
+            log.error(ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro interno do servidor, por favor tente novamente mais tarde.");
         }
     }
 }
