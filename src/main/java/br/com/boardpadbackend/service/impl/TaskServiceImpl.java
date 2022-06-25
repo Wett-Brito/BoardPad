@@ -49,6 +49,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto createTask(TaskInputDto inputTask) {
         try {
             TaskEntity newTask =  taskRepository.save(taskInputDtoConverter.dtoToEntity(inputTask));
+            System.out.println(newTask.toString());
             return taskDtoConverter.entityToDto(newTask);
         }
         catch(Exception ex) {

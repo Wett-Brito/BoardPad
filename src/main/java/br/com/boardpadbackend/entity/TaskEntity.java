@@ -30,4 +30,7 @@ public class TaskEntity {
     @JoinColumn(name = "id_category")
     private CategoryEntity categoryEntity;
 
+    @ManyToOne
+    @JoinColumn(name = "id_boards")
+    private BoardEntity boardEntity;
 }

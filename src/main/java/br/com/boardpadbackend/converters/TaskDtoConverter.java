@@ -20,6 +20,7 @@ public interface TaskDtoConverter extends Converter <TaskEntity, TaskDto> {
             @Mapping(target = "statusEntity.nameStatus", source = "nameStatus"),
             @Mapping(target = "categoryEntity.idCategory", source = "idCategory"),
             @Mapping(target = "categoryEntity.nameCategory", source = "nameCategory"),
+            @Mapping(target = "boardEntity.idBoard", source = "idBoard"),
     })
     @Override
     TaskEntity dtoToEntity(TaskDto dto);
@@ -30,7 +31,8 @@ public interface TaskDtoConverter extends Converter <TaskEntity, TaskDto> {
             @Mapping(target = "idStatus", source = "statusEntity.idStatus"),
             @Mapping(target = "nameStatus", source = "statusEntity.nameStatus"),
             @Mapping(target = "idCategory", source = "categoryEntity.idCategory"),
-            @Mapping(target = "nameCategory", source = "categoryEntity.nameCategory")
+            @Mapping(target = "nameCategory", source = "categoryEntity.nameCategory"),
+            @Mapping(target = "idBoard", source = "boardEntity.idBoard"),
     })
     @Override
     TaskDto entityToDto(TaskEntity entity);
