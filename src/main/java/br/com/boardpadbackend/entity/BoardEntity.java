@@ -22,7 +22,7 @@ import lombok.NonNull;
 public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_boards")
+    @Column(name = "id_board")
     private Long idBoard;
     
     @Column(name = "code_board")

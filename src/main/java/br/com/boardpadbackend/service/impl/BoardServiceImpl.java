@@ -20,29 +20,30 @@ public class BoardServiceImpl implements BoardService {
         this.BoardRepository = BoardRepository;
 
     }
-    
 
-	@Override
-	public BoardDto createBoard(String boardCode) {
-		
-		try {
-			BoardEntity boardEntity = BoardRepository.findByCode(boardCode);
-			
-			return BoardDto.builder()
-					.id(boardEntity.getIdBoard())
-					.codeBoard(boardEntity.getCodeBoard())
-					.build();
-			
-		} catch (NullPointerException e) {
-			BoardEntity boardEntity =  BoardRepository.save(BoardEntity.builder().codeBoard(boardCode).build());
 
-			return BoardDto.builder()
-					.id(boardEntity.getIdBoard())
-					.codeBoard(boardEntity.getCodeBoard())
-					.build();
+    @Override
+    public BoardDto createBoard(String boardCode) {
+        try {
+            Optional<BoardEntity> existentBoard = BoardRepository.findByCodeBoard(boardCode);
+            if (existentBoard.isPresent()) {
+                return BoardDto.builder()
+                        .id(existentBoard.get().getIdBoard())
+                        .codeBoard(existentBoard.get().getCodeBoard())
+                        .build();
+            }
+            BoardEntity newBoardEntity = BoardRepository.save(BoardEntity.builder()
+							.codeBoard(boardCode)
+							.build());
 
-		}
-		
-	}
+            return BoardDto.builder()
+                    .id(newBoardEntity.getIdBoard())
+                    .codeBoard(newBoardEntity.getCodeBoard())
+                    .build();
+
+        } catch (Exception e) {
+        	return null;
+        }
+    }
 
 }

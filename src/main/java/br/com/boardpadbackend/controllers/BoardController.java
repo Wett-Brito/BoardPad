@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@RequestMapping(path = "/")
+@RequestMapping(path = "board")
 @RestController
 @Api(value = "Board controller", tags = {"Boards"})
 public class BoardController {
@@ -33,26 +33,28 @@ public class BoardController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal server error. Board wasn't created")
     })
-    @GetMapping(value = "/{code}")
+    @PostMapping(value = "/{code}")
     public ResponseEntity<BoardDto> FindOrCreateBoard (@PathVariable String code){
         return ResponseEntity.ok().body(BoardService.createBoard(code)) ;
     }
     
     
-    @ApiOperation("Create a board passing a code")
+    @ApiOperation("Create a board using a random code")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal server error. Board wasn't created")
     })
-    @GetMapping()
-    public ResponseEntity<BoardDto> createBoardWithRandomCode (){
+    @PostMapping("random")
+    public ResponseEntity<Object> createBoardWithRandomCode (){
 		CodeGenerator passwordGenerator = new CodeGenerator.codeGeneratorBuilder()
         .useDigits(true)
         .useLower(true)
         .useUpper(true)
         .build();
-    	
-        return ResponseEntity.ok().body(BoardService.createBoard(passwordGenerator.generate(10))) ;
+        BoardDto createdBoard = BoardService.createBoard(passwordGenerator.generate(10));
+
+        return (createdBoard != null)? ResponseEntity.ok().body(createdBoard)
+                : ResponseEntity.internalServerError().body("Erro ao tentar criar board");
     }	    
     
 }

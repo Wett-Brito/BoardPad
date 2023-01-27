@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import br.com.boardpadbackend.entity.BoardEntity;
 
+import java.util.Optional;
+
 @Repository
 public interface BoardRepository extends JpaRepository <BoardEntity, Long> {
-	
-    @Query(value = "SELECT * FROM table_boards WHERE code_board = ?1", nativeQuery = true)
-    BoardEntity findByCode(String code_board);
+    Optional<BoardEntity> findByCodeBoard (String code_board);
 }

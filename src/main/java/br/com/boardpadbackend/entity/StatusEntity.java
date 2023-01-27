@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,4 +21,8 @@ public class StatusEntity {
     private Long idStatus;
     @Column(name = "name_status")
     private String nameStatus;
+
+    @ManyToOne(targetEntity = BoardEntity.class, optional = false)
+    @JoinColumn(name = "id_board", referencedColumnName = "id_board")
+    private BigInteger boardId;
 }
