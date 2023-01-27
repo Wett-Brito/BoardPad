@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.controllers;
 
+import br.com.boardpadbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +22,11 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @Api(value = "Board controller", tags = {"Boards"})
 public class BoardController {
-    private BoardService BoardService;
+    private BoardService boardService;
 
     @Autowired
-    public BoardController(BoardService BoardService) {
-        this.BoardService = BoardService;
+    public BoardController(BoardService boardService) {
+        this.boardService = boardService;
     }
 
     @ApiOperation("Create a board passing a code")
@@ -35,7 +36,7 @@ public class BoardController {
     })
     @PostMapping(value = "/{code}")
     public ResponseEntity<BoardDto> FindOrCreateBoard (@PathVariable String code){
-        return ResponseEntity.ok().body(BoardService.createBoard(code)) ;
+        return ResponseEntity.ok().body(boardService.createBoard(code)) ;
     }
     
     
@@ -51,7 +52,7 @@ public class BoardController {
         .useLower(true)
         .useUpper(true)
         .build();
-        BoardDto createdBoard = BoardService.createBoard(passwordGenerator.generate(10));
+        BoardDto createdBoard = boardService.createBoard(passwordGenerator.generate(10));
 
         return (createdBoard != null)? ResponseEntity.ok().body(createdBoard)
                 : ResponseEntity.internalServerError().body("Erro ao tentar criar board");
