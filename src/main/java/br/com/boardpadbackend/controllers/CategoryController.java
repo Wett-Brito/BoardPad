@@ -1,6 +1,8 @@
 package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.dto.CategoryDto;
+import br.com.boardpadbackend.dto.GenericResponseDTO;
+import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.service.CategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,12 +33,18 @@ public class CategoryController {
             @ApiResponse(code = 204, message = "No categories available"),
             @ApiResponse(code = 500, message = "Internal server error. Please try again")
     })
-    public ResponseEntity<List<CategoryDto>> listAllCategoriesOfBoard (@RequestParam("board-code")String boardCode) {
+    public ResponseEntity<GenericResponseDTO<List<CategoryDto>>> listAllCategoriesOfBoard (@RequestParam("board-code")String boardCode) {
         List<CategoryDto> responseList = categoryService.listAllCategories(boardCode);
 
-        return (responseList.size() > 0 ) ?
-                ResponseEntity.ok().body(responseList) :
-                ResponseEntity.noContent().build();
+        return (responseList.size() > 0) ?
+                ResponseEntity.ok().body(GenericResponseDTO.<List<CategoryDto>>builder()
+                        .status("OK")
+                        .response(responseList)
+                        .build()) :
+                ResponseEntity.status(404).body(GenericResponseDTO.<List<CategoryDto>>builder()
+                        .status("NOK")
+                        .message("There is no categories registered at this board")
+                        .build());
     }
     @ApiOperation("Create a new task Category")
     @ApiResponses({
@@ -46,9 +54,9 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<CategoryDto> createCategory (@RequestParam("board-code")String boardCode, String newCategoryName) {
         CategoryDto newCategory = categoryService.createCategory(boardCode, newCategoryName);
-        return (newCategory != null && !newCategory.getName().isEmpty()) ?
-                ResponseEntity.status(201).body(newCategory) :
-                ResponseEntity.status(500).build();
+        if (newCategory == null || newCategory.getName().isEmpty())
+            throw new InternalServerErrorException("Internal error when tried to create a category");
+        return ResponseEntity.status(201).body(newCategory);
     }
     @ApiOperation("Delete a task Category")
     @ApiResponses({

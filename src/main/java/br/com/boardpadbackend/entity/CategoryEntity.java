@@ -20,7 +20,7 @@ public class CategoryEntity {
     private Long idCategory;
     @Column(name = "name_category")
     private String nameCategory;
-    @ManyToOne(targetEntity = BoardEntity.class, fetch = FetchType.LAZY)
-    @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false)
     private BoardEntity board;
 }

@@ -21,7 +21,7 @@ public class StatusEntity {
     @Column(name = "name_status")
     private String nameStatus;
 
-    @ManyToOne(targetEntity = BoardEntity.class, optional = false)
-    @JoinColumn(name = "id_board", referencedColumnName = "id_board")
-    private Long boardId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false)
+    private BoardEntity board;
 }

@@ -3,6 +3,8 @@ package br.com.boardpadbackend.service.impl;
 import br.com.boardpadbackend.dto.CategoryDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.entity.CategoryEntity;
+import br.com.boardpadbackend.exceptions.BadRequestException;
+import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.repositories.BoardRepository;
 import br.com.boardpadbackend.repositories.CategoryRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
@@ -49,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto createCategory(String boardCode, String categoryName) {
         Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
-        if(foundBoard.isEmpty()) throw new RuntimeException("The board wasn't created. Please create a board before try create a category");
+        if(foundBoard.isEmpty()) throw new BadRequestException("The board wasn't created. Please create a board before try create a category");
 
         CategoryEntity newEntity = CategoryEntity.builder()
                 .board(foundBoard.get())
@@ -66,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategoryById(String boardCode, Long idCategory) {
         Optional <CategoryEntity> foundCategory = categoryRepository.findByBoardCodeAndCategoryId(boardCode, idCategory);
-        if(foundCategory.isEmpty()) throw new RuntimeException("Category not found.");
+        if(foundCategory.isEmpty()) throw new NotFoundException("Category not found.");
 
     	taskRepository.updateTaskCategoryToNull(idCategory);
         categoryRepository.delete(foundCategory.get());
