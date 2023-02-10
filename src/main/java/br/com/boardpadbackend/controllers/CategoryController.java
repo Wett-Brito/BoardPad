@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.util.List;
 
-@RequestMapping(path = "board/{board-code}/category")
+@RequestMapping(path = "/category")
 @RestController
 @Api(value = "Task Categories", tags = {"Category"})
 public class CategoryController {

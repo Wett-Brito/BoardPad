@@ -43,10 +43,9 @@ public class StatusController {
             @ApiResponse(code = 204, message = "No content to show")
     })
     @GetMapping
-    public ResponseEntity<List<StatusDto>> listAllStatus() {
-        List<StatusDto> statusList = statusService.listAllStatus();
-        return (statusList.size() > 0) ? ResponseEntity.ok().body(statusList) :
-                ResponseEntity.noContent().build();
+    public ResponseEntity<List<StatusDto>> listAllStatus(@RequestParam("board-code") String boardCode) {
+        var statusList = statusService.listAllStatus(boardCode);
+        return ResponseEntity.ok().body(statusList);
     }
 
     @ApiOperation(value = "Creates new status")
@@ -56,8 +55,9 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PostMapping
-    public StatusDto createNewStatus(@RequestBody String statusName) {
-        return statusService.createNewStatus(statusName);
+    public StatusDto createNewStatus(@RequestParam("new-status-name") String statusName,
+                                     @RequestParam("board-code") String boardCode) {
+        return statusService.createNewStatus(boardCode, statusName);
     }
 
     @ApiOperation(value = "Deletes a status")
