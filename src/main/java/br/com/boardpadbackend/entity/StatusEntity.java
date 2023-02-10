@@ -20,4 +20,8 @@ public class StatusEntity {
     private Long idStatus;
     @Column(name = "name_status")
     private String nameStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false)
+    private BoardEntity board;
 }

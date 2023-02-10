@@ -1,10 +1,8 @@
 package br.com.boardpadbackend.entity;
 
-import br.com.boardpadbackend.dto.StatusDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +21,14 @@ public class TaskEntity {
     private String descriptionTask;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_status", nullable = false)
+    @JoinColumn(name = "id_status")
     private StatusEntity statusEntity;
 
     @ManyToOne
     @JoinColumn(name = "id_category")
     private CategoryEntity categoryEntity;
 
+    @ManyToOne(targetEntity = BoardEntity.class, optional = false)
+    @JoinColumn(name = "id_board", referencedColumnName = "id_board")
+    private Long boardId;
 }

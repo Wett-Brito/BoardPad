@@ -16,7 +16,8 @@ public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputD
             @Mapping(target = "titleTask", source = "title"),
             @Mapping(target = "descriptionTask", source = "description"),
             @Mapping(target = "statusEntity.idStatus", source = "idStatus"),
-            @Mapping(target = "categoryEntity.idCategory", source = "idCategory")
+            @Mapping(target = "categoryEntity.idCategory", source = "idCategory"),
+            @Mapping(target = "boardId", source = "idBoard")
     })
     @Override
     TaskEntity dtoToEntity(TaskInputDto dto) ;

@@ -17,4 +17,6 @@ public class TaskDto {
     private String nameStatus;
     private Long idCategory;
     private String nameCategory;
+    private Long idBoard;
+    private String boardCode;
 }

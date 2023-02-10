@@ -1,7 +1,11 @@
 package br.com.boardpadbackend.controllers;
 
+import java.math.BigInteger;
 import java.util.List;
 
+import br.com.boardpadbackend.exceptions.BadRequestException;
+import br.com.boardpadbackend.exceptions.InternalServerErrorException;
+import br.com.boardpadbackend.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -42,10 +46,9 @@ public class StatusController {
             @ApiResponse(code = 204, message = "No content to show")
     })
     @GetMapping
-    public ResponseEntity<List<StatusDto>> listAllStatus() {
-        List<StatusDto> statusList = statusService.listAllStatus();
-        return (statusList.size() > 0) ? ResponseEntity.ok().body(statusList) :
-                ResponseEntity.noContent().build();
+    public ResponseEntity<List<StatusDto>> listAllStatus(@RequestParam("board-code") String boardCode) {
+        var statusList = statusService.listAllStatus(boardCode);
+        return ResponseEntity.ok().body(statusList);
     }
 
     @ApiOperation(value = "Creates new status")
@@ -55,8 +58,9 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PostMapping
-    public StatusDto createNewStatus(@RequestBody String statusName) {
-        return statusService.createNewStatus(statusName);
+    public StatusDto createNewStatus(@RequestParam("new-status-name") String statusName,
+                                     @RequestParam("board-code") String boardCode) {
+        return statusService.createNewStatus(boardCode, statusName);
     }
 
     @ApiOperation(value = "Deletes a status")
@@ -65,14 +69,21 @@ public class StatusController {
             @ApiResponse(code = 400, message = "Error, please delete this status tasks before delete this status"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
-    @DeleteMapping(path = "{id}")
-    public ResponseEntity<String> deleteStatus(@PathVariable("id") Long idStatus) {
+    @DeleteMapping(path = "{status-id}")
+    public ResponseEntity<String> deleteStatus(@PathVariable("status-id") Long idStatus,
+                                               @RequestParam("board-code") String boardCode) {
         try {
-            statusService.deleteStatus(idStatus);
+            statusService.deleteStatus(boardCode, idStatus);
             return ResponseEntity.noContent().build();
         } catch (DataIntegrityViolationException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Para remover essa coluna de status voce deve primeiro remover suas tarefas.");
+            throw new BadRequestException("Para remover essa coluna de status voce deve primeiro remover suas tarefas.");
+        } catch (NotFoundException ex) {
+            log.error(ex);
+            throw new NotFoundException(ex.getMessage());
+        }
+        catch (Exception ex) {
+            log.error(ex);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -82,15 +93,11 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PutMapping(path = "{id}")
-    public ResponseEntity<?> updateStatusName (@PathVariable("id") Long idStatus, @RequestParam(name = "new-name") String newStatusName) {
-        try {
-            statusService.updateStatusName(idStatus, newStatusName);
-            return ResponseEntity.ok().body("Atualizado com sucesso!");
-        }catch(Exception ex){
-            log.error(ex);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro interno do servidor, por favor tente novamente mais tarde.");
-        }
+    public ResponseEntity<?> updateStatusName (@PathVariable("id") Long idStatus,
+                                               @RequestParam(name = "new-name") String newStatusName,
+                                               @RequestParam(name = "board-code") String boardCode
+    ) {
+        statusService.updateStatusName(idStatus, newStatusName, boardCode);
+        return ResponseEntity.ok().body("Successfully updated.");
     }
 }
