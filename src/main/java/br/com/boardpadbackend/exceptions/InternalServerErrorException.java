@@ -1,8 +1,8 @@
 package br.com.boardpadbackend.exceptions;
 
 public class InternalServerErrorException extends RuntimeException {
-    private InternalServerErrorException() {
-        super();
+    public InternalServerErrorException() {
+        super("An internal server error has occurred. Please try again later.");
     }
 
     public InternalServerErrorException(String message) {

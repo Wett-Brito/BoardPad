@@ -21,7 +21,7 @@ public class TaskEntity {
     private String descriptionTask;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_status", nullable = false)
+    @JoinColumn(name = "id_status")
     private StatusEntity statusEntity;
 
     @ManyToOne

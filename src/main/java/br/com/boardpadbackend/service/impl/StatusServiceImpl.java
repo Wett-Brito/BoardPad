@@ -3,18 +3,16 @@ package br.com.boardpadbackend.service.impl;
 import br.com.boardpadbackend.dto.StatusDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.entity.StatusEntity;
-import br.com.boardpadbackend.exceptions.BadRequestException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
-import br.com.boardpadbackend.repositories.BoardRepository;
 import br.com.boardpadbackend.repositories.StatusRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
+import br.com.boardpadbackend.service.BoardService;
 import br.com.boardpadbackend.service.StatusService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,13 +22,15 @@ import java.util.stream.Collectors;
 public class StatusServiceImpl implements StatusService {
     private StatusRepository statusRepository;
     private TaskRepository taskRepository;
-    private BoardRepository boardRepository;
+    private BoardService boardService;
 
     @Autowired
-    public StatusServiceImpl(StatusRepository statusRepository, TaskRepository taskRepository, BoardRepository boardRepository) {
+    public StatusServiceImpl(StatusRepository statusRepository,
+                             TaskRepository taskRepository,
+                             BoardService boardService) {
         this.statusRepository = statusRepository;
         this.taskRepository = taskRepository;
-        this.boardRepository = boardRepository;
+        this.boardService = boardService;
     }
 
     @Override
@@ -48,12 +48,11 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public StatusDto createNewStatus(String boardCode, String statusName) {
-        Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
-        if(foundBoard.isEmpty()) throw new BadRequestException("The board wasn't created. Please create a board before try create a category");
+        BoardEntity foundBoard = boardService.findBoardByBoardCode(boardCode);
 
         var newStatus = statusRepository.save(StatusEntity.builder()
                 .nameStatus(statusName)
-                .board(foundBoard.get())
+                .board(foundBoard)
                 .build());
         return StatusDto.builder()
                 .id(newStatus.getIdStatus())
@@ -64,15 +63,30 @@ public class StatusServiceImpl implements StatusService {
 
     @Transactional
     @Override
-    public void deleteStatus(Long idStatus) {
+    public void deleteStatus(String boardCode, Long idStatus) {
         taskRepository.deleteAllByStatusEntityIdStatus(idStatus);
-        statusRepository.deleteById(idStatus);
+        var statusFound = statusRepository.getStatusByIdAndBoardCode(idStatus, boardCode);
+        statusFound.orElseThrow(()-> new NotFoundException("The status ["
+                + idStatus
+                + "] wasn't found on board ["
+                + boardCode
+                + "]"));
+        statusFound.ifPresent(entity->statusRepository.delete(entity));
     }
 
     @Transactional
     @Override
-    public void updateStatusName(Long idStatus, String newStatusName) {
-        Optional<StatusEntity> newStatusEntity = statusRepository.findById(idStatus);
-        newStatusEntity.ifPresent(statusEntity -> statusEntity.setNameStatus(newStatusName));
+    public void updateStatusName(Long idStatus, String newStatusName, String boardCode) {
+        Optional<StatusEntity> newStatusEntity = statusRepository.getStatusByIdAndBoardCode(idStatus, boardCode);
+        newStatusEntity.ifPresentOrElse(statusEntity -> statusEntity.setNameStatus(newStatusName),
+                ()-> {
+                    throw new NotFoundException("The status ["
+                            + idStatus
+                            + "] wasn't found on board ["
+                            + boardCode
+                            + "]");
+                }
+        );
+
     }
 }

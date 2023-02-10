@@ -19,11 +19,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     void updateTaskStatus(Long idTask, Long newStatusId);
 
     @Modifying
-    @Query(value = "DELETE FROM TaskEntity task WHERE task.statusEntity.idStatus = :idStatus")
+    @Query(value = "UPDATE TaskEntity task SET task.statusEntity = null WHERE task.statusEntity.idStatus = :idStatus")
     void deleteAllByStatusEntityIdStatus(Long idStatus);
     
     @Modifying
-    @Query("UPDATE TaskEntity task SET task.categoryEntity.idCategory = null WHERE task.categoryEntity.idCategory = :idCantegory ")
-    void updateTaskCategoryToNull(Long idCantegory);
+    @Query("UPDATE TaskEntity task SET task.categoryEntity.idCategory = null WHERE task.categoryEntity.idCategory = :idCategory ")
+    void updateTaskCategoryToNull(Long idCategory);
     
 }

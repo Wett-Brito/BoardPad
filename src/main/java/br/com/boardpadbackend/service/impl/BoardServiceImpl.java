@@ -2,6 +2,7 @@ package br.com.boardpadbackend.service.impl;
 
 import java.util.Optional;
 
+import br.com.boardpadbackend.exceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,11 @@ import br.com.boardpadbackend.service.BoardService;
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    private BoardRepository BoardRepository;
+    private BoardRepository boardRepository;
 
     @Autowired
-    public BoardServiceImpl(BoardRepository BoardRepository) {
-        this.BoardRepository = BoardRepository;
+    public BoardServiceImpl(BoardRepository boardRepository) {
+        this.boardRepository = boardRepository;
 
     }
 
@@ -25,14 +26,14 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDto createBoard(String boardCode) {
         try {
-            Optional<BoardEntity> existentBoard = BoardRepository.findByCodeBoard(boardCode);
+            Optional<BoardEntity> existentBoard = boardRepository.findByCodeBoard(boardCode);
             if (existentBoard.isPresent()) {
                 return BoardDto.builder()
                         .id(existentBoard.get().getIdBoard())
                         .codeBoard(existentBoard.get().getCodeBoard())
                         .build();
             }
-            BoardEntity newBoardEntity = BoardRepository.save(BoardEntity.builder()
+            BoardEntity newBoardEntity = boardRepository.save(BoardEntity.builder()
 							.codeBoard(boardCode)
 							.build());
 
@@ -44,6 +45,12 @@ public class BoardServiceImpl implements BoardService {
         } catch (Exception e) {
         	return null;
         }
+    }
+
+    public BoardEntity findBoardByBoardCode(String boardCode) {
+        Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
+        if(foundBoard.isEmpty()) throw new BadRequestException("The board wasn't created. Please create a board before try create a category");
+        return foundBoard.get();
     }
 
 }

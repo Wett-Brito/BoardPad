@@ -11,7 +11,7 @@ public interface StatusService {
 
     StatusDto createNewStatus(String boardCode, String statusName);
 
-    void deleteStatus(Long idStatus);
+    void deleteStatus(String boardCode, Long idStatus) ;
 
-    void updateStatusName(Long idStatus, String newStatusName) ;
+    void updateStatusName(Long idStatus, String newStatusName, String boardCode);
 }
