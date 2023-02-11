@@ -42,8 +42,8 @@ public class TaskController {
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @GetMapping
-    public List<TaskDto> list (){
-        return taskService.listAllTasks();
+    public List<TaskDto> list (@RequestParam("board-code") String boardCode){
+        return taskService.listAllTasks(boardCode);
     }
 
     @ApiOperation("Update tasks")

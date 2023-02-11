@@ -1,12 +1,15 @@
 package br.com.boardpadbackend.service.impl;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import br.com.boardpadbackend.exceptions.InternalServerErrorException;
+import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.service.BoardService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import br.com.boardpadbackend.entity.TaskEntity;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.TaskService;
 
+@Log4j2
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -35,8 +39,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> listAllTasks() {
-        return taskRepository.findAllWithCategoryAndStatus().stream()
+    public List<TaskDto> listAllTasks(String boardCode) {
+        var taskList = taskRepository.findAllWithCategoryAndStatus(boardCode);
+        if(taskList.isEmpty()) throw new NotFoundException("No tasks found to board" + boardCode);
+        return taskList.stream()
                 .map(taskDtoConverter::entityToDto)
                 .collect(Collectors.toList());
     }
@@ -54,15 +60,14 @@ public class TaskServiceImpl implements TaskService {
             var foundBoard = boardService.findBoardByBoardCode(boardCode);
             TaskEntity newTask = taskInputDtoConverter.dtoToEntity(inputTask);
             newTask.setBoard(foundBoard);
+            newTask.setDateCreationTask(new Date());
 
             taskRepository.save(newTask);
             return taskDtoConverter.entityToDto(newTask);
         }
         catch(Exception ex) {
-            if(ex instanceof SQLIntegrityConstraintViolationException){
-                throw new RuntimeException("Erro ao encontrar");
-            }
-            return null;
+            log.error("Error while trying create new TASK ENTITY " + inputTask, ex);
+            throw new InternalServerErrorException();
         }
 
     }

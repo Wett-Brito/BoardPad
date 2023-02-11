@@ -3,6 +3,7 @@ package br.com.boardpadbackend.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +20,8 @@ public class TaskEntity {
     private String titleTask;
     @Column(name = "description_tasks")
     private String descriptionTask;
+    @Column(name = "dtcreation_task", nullable = false)
+    private Date dateCreationTask;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")

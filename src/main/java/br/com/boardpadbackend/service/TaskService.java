@@ -6,7 +6,7 @@ import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import java.util.List;
 
 public interface TaskService {
-    List<TaskDto> listAllTasks();
+    List<TaskDto> listAllTasks(String boardCode);
     void updateStatusTask (Long idTask, Long newStatusId);
     TaskDto createTask(String boardCode, TaskInputDto inputTask);
     void deleteTask(Long idTask);
