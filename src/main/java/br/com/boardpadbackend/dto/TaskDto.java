@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +21,5 @@ public class TaskDto {
     private String nameCategory;
     private Long idBoard;
     private String boardCode;
+    private Date creationDate;
 }

@@ -27,48 +27,51 @@ public class TaskController {
     @ApiOperation("Create new Tasks")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Task created successfully"),
-            @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
+            @ApiResponse(code = 400, message = "Board doesn't exists"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @PostMapping
-    public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask){
-        return ResponseEntity.ok().body(taskService.createTask(inputTask));
+    public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask,
+                                                  @RequestParam("board-code") String boardCode){
+        return ResponseEntity.ok().body(taskService.createTask(boardCode, inputTask));
     }
 
-    @ApiOperation("List all tasks")
+    @ApiOperation("List all tasks of specific board")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 204, message = "No content to show"),
+            @ApiResponse(code = 404, message = "No tasks found on board"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @GetMapping
-    public List<TaskDto> list (){
-        return taskService.listAllTasks();
+    public List<TaskDto> list (@RequestParam("board-code") String boardCode){
+        return taskService.listAllTasks(boardCode);
     }
 
-    @ApiOperation("Update tasks")
+    @ApiOperation("Update task status")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Task/status don't found in board"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
-    @PutMapping(path = "{id}")
-    public void updateTask (@PathVariable("id") Long taskId, @RequestParam("newStatusId") Long newStatusId) {
-        taskService.updateStatusTask(taskId, newStatusId);
+    @PutMapping(path = "{task-id}/status")
+    public void updateTask (@RequestParam("board-code") String boardCode,
+                            @PathVariable("task-id") Long taskId,
+                            @RequestParam("newStatusId") Long newStatusId) {
+        taskService.updateStatusTask(boardCode, taskId, newStatusId);
     }
     
     @ApiOperation("Delete tasks")
     @ApiResponses({
             @ApiResponse(code = 204, message = "Task deleted successfully"),
+            @ApiResponse(code = 404, message = "Task not found"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't deleted")
     })
     @DeleteMapping(path = "{id}")
-    public ResponseEntity<Void> deleteTask (@PathVariable("id") Long taskId) {
-        taskService.deleteTask(taskId);
+    public ResponseEntity<Void> deleteTask (@PathVariable("id") Long taskId,
+                                            @RequestParam("board-code") String boardCode
+    ) {
+        taskService.deleteTask(boardCode, taskId);
         
         return ResponseEntity.noContent().build();
     }
-    
-    
-    
-    
-    
 }

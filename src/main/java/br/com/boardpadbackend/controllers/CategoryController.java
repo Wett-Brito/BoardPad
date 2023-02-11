@@ -30,7 +30,7 @@ public class CategoryController {
     @ApiOperation(value = "Lists all categories available in a board")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Success"),
-            @ApiResponse(code = 204, message = "No categories available"),
+            @ApiResponse(code = 404, message = "No categories available"),
             @ApiResponse(code = 500, message = "Internal server error. Please try again")
     })
     public ResponseEntity<GenericResponseDTO<List<CategoryDto>>> listAllCategoriesOfBoard (@RequestParam("board-code")String boardCode) {
@@ -49,6 +49,7 @@ public class CategoryController {
     @ApiOperation("Create a new task Category")
     @ApiResponses({
             @ApiResponse( code= 201, message = "Category created successfully"),
+            @ApiResponse( code= 404, message = "Board doesn't exists"),
             @ApiResponse( code= 500, message = "Internal Server Error. Category wasn't created.")
     })
     @PostMapping
@@ -61,6 +62,7 @@ public class CategoryController {
     @ApiOperation("Delete a task Category")
     @ApiResponses({
             @ApiResponse( code= 204, message = "Category deleted successfully"),
+            @ApiResponse( code= 404, message = "Category not found on board"),
             @ApiResponse( code= 500, message = "Internal Server Error. Category wasn't deleted.")
     })
     @DeleteMapping("{id}")
