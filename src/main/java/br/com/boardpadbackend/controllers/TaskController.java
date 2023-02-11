@@ -27,7 +27,8 @@ public class TaskController {
     @ApiOperation("Create new Tasks")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Task created successfully"),
-            @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
+            @ApiResponse(code = 400, message = "Board doesn't exists"),
+            @ApiResponse(code = 500, message = "Internal server error")
     })
     @PostMapping
     public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask,

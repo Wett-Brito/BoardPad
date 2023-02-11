@@ -8,14 +8,12 @@ import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +41,7 @@ public class StatusController {
     @ApiOperation(value = "Returns all status available")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 204, message = "No content to show")
+            @ApiResponse(code = 404, message = "No status found on board")
     })
     @GetMapping
     public ResponseEntity<List<StatusDto>> listAllStatus(@RequestParam("board-code") String boardCode) {
@@ -54,7 +52,7 @@ public class StatusController {
     @ApiOperation(value = "Creates new status")
     @ApiResponses({
             @ApiResponse(code = 201, message = "Created"),
-            @ApiResponse(code = 400, message = "Request error"),
+            @ApiResponse(code = 400, message = "Board doesn't exists"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PostMapping
@@ -67,6 +65,7 @@ public class StatusController {
     @ApiResponses({
             @ApiResponse(code = 204, message = "Status deleted successfully"),
             @ApiResponse(code = 400, message = "Error, please delete this status tasks before delete this status"),
+            @ApiResponse(code = 404, message = "The status doesn't exists on board"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @DeleteMapping(path = "{status-id}")
@@ -76,6 +75,7 @@ public class StatusController {
             statusService.deleteStatus(boardCode, idStatus);
             return ResponseEntity.noContent().build();
         } catch (DataIntegrityViolationException ex) {
+            log.error(ex);
             throw new BadRequestException("Para remover essa coluna de status voce deve primeiro remover suas tarefas.");
         } catch (NotFoundException ex) {
             log.error(ex);
@@ -90,6 +90,7 @@ public class StatusController {
     @ApiOperation(value = "Updates the status name")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "The status doesn't exists on board"),
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PutMapping(path = "{id}")
