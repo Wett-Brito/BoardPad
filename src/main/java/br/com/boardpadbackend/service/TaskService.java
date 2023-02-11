@@ -8,6 +8,6 @@ import java.util.List;
 public interface TaskService {
     List<TaskDto> listAllTasks();
     void updateStatusTask (Long idTask, Long newStatusId);
-    TaskDto createTask(TaskInputDto inputTask);
+    TaskDto createTask(String boardCode, TaskInputDto inputTask);
     void deleteTask(Long idTask);
 }

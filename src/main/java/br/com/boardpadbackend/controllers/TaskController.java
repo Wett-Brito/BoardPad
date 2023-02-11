@@ -30,8 +30,9 @@ public class TaskController {
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @PostMapping
-    public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask){
-        return ResponseEntity.ok().body(taskService.createTask(inputTask));
+    public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask,
+                                                  @RequestParam("board-code") String boardCode){
+        return ResponseEntity.ok().body(taskService.createTask(boardCode, inputTask));
     }
 
     @ApiOperation("List all tasks")

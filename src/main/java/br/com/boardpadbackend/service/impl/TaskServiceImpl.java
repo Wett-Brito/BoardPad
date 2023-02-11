@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import br.com.boardpadbackend.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,12 @@ public class TaskServiceImpl implements TaskService {
     private TaskInputDtoConverter taskInputDtoConverter = TaskInputDtoConverter.INSTANCE;
     private TaskDtoConverter taskDtoConverter = TaskDtoConverter.INSTANCE;
 
+    private BoardService boardService;
     private TaskRepository taskRepository;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(BoardService boardService, TaskRepository taskRepository) {
+        this.boardService = boardService;
         this.taskRepository = taskRepository;
     }
 
@@ -46,10 +49,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public TaskDto createTask(TaskInputDto inputTask) {
+    public TaskDto createTask(String boardCode, TaskInputDto inputTask) {
         try {
-            TaskEntity newTask =  taskRepository.save(taskInputDtoConverter.dtoToEntity(inputTask));
-            System.out.println(newTask.toString());
+            var foundBoard = boardService.findBoardByBoardCode(boardCode);
+            TaskEntity newTask = taskInputDtoConverter.dtoToEntity(inputTask);
+            newTask.setBoard(foundBoard);
+
+            taskRepository.save(newTask);
             return taskDtoConverter.entityToDto(newTask);
         }
         catch(Exception ex) {

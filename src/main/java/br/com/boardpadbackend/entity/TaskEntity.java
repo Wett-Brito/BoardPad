@@ -24,11 +24,11 @@ public class TaskEntity {
     @JoinColumn(name = "id_status")
     private StatusEntity statusEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_category")
     private CategoryEntity categoryEntity;
 
-    @ManyToOne(targetEntity = BoardEntity.class, optional = false)
-    @JoinColumn(name = "id_board", referencedColumnName = "id_board")
-    private Long boardId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false)
+    private BoardEntity board;
 }
