@@ -29,7 +29,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
 
     @Modifying
     @Query(value = "UPDATE TaskEntity task SET task.statusEntity = null WHERE task.statusEntity.idStatus = :idStatus")
-    void deleteAllByStatusEntityIdStatus(Long idStatus);
+    void setAllStatusNullOfTasksThatBelongsToStatusById(Long idStatus);
     
     @Modifying
     @Query("UPDATE TaskEntity task SET task.categoryEntity.idCategory = null WHERE task.categoryEntity.idCategory = :idCategory ")

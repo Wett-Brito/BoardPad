@@ -82,12 +82,17 @@ public class TaskServiceImpl implements TaskService {
     
     @Transactional
     @Override
-    public void deleteTask(Long taskId) {
-    	try {
-    		taskRepository.deleteById(taskId);
-    	}catch (EmptyResultDataAccessException e) {
-    		throw new RuntimeException("Erro ao encontrar ID da task para deletar");
-    	}
+    public void deleteTask(String boardCode, Long taskId) {
+        try {
+            var taskToDelete = getTaskByBoardCodeAndTaskId(boardCode, taskId);
+            taskRepository.delete(taskToDelete);
+        }
+        catch (Exception ex){
+            log.error(ex);
+            if(!(ex instanceof NotFoundException))
+                throw new InternalServerErrorException();
+            else throw new NotFoundException(ex.getMessage());
+        }
     }
 
     public TaskEntity getTaskByBoardCodeAndTaskId(String boardCode, Long taskId) {

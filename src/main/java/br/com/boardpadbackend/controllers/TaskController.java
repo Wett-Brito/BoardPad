@@ -35,10 +35,10 @@ public class TaskController {
         return ResponseEntity.ok().body(taskService.createTask(boardCode, inputTask));
     }
 
-    @ApiOperation("List all tasks")
+    @ApiOperation("List all tasks of specific board")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 204, message = "No content to show"),
+            @ApiResponse(code = 404, message = "No tasks found on board"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @GetMapping
@@ -49,6 +49,7 @@ public class TaskController {
     @ApiOperation("Update task status")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Task/status don't found in board"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @PutMapping(path = "{task-id}/status")
@@ -61,17 +62,15 @@ public class TaskController {
     @ApiOperation("Delete tasks")
     @ApiResponses({
             @ApiResponse(code = 204, message = "Task deleted successfully"),
+            @ApiResponse(code = 404, message = "Task not found"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't deleted")
     })
     @DeleteMapping(path = "{id}")
-    public ResponseEntity<Void> deleteTask (@PathVariable("id") Long taskId) {
-        taskService.deleteTask(taskId);
+    public ResponseEntity<Void> deleteTask (@PathVariable("id") Long taskId,
+                                            @RequestParam("board-code") String boardCode
+    ) {
+        taskService.deleteTask(boardCode, taskId);
         
         return ResponseEntity.noContent().build();
     }
-    
-    
-    
-    
-    
 }
