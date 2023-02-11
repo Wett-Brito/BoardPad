@@ -77,16 +77,16 @@ public class StatusServiceImpl implements StatusService {
     @Transactional
     @Override
     public void updateStatusName(Long idStatus, String newStatusName, String boardCode) {
-        Optional<StatusEntity> newStatusEntity = statusRepository.getStatusByIdAndBoardCode(idStatus, boardCode);
-        newStatusEntity.ifPresentOrElse(statusEntity -> statusEntity.setNameStatus(newStatusName),
-                ()-> {
-                    throw new NotFoundException("The status ["
-                            + idStatus
-                            + "] wasn't found on board ["
-                            + boardCode
-                            + "]");
-                }
-        );
-
+        StatusEntity newStatusEntity = getStatusEntityByBoardCodeAndStatusId(boardCode, idStatus);
+        newStatusEntity.setNameStatus(newStatusName);
+    }
+    public StatusEntity getStatusEntityByBoardCodeAndStatusId (String boardCode, Long statusId) {
+        Optional<StatusEntity> statusEntity = statusRepository.getStatusByIdAndBoardCode(statusId, boardCode);
+        if(statusEntity.isEmpty()) throw new NotFoundException("The status ["
+                + statusId
+                + "] wasn't found on board ["
+                + boardCode
+                + "]");
+        return statusEntity.get();
     }
 }

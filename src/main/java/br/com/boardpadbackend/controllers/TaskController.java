@@ -46,14 +46,16 @@ public class TaskController {
         return taskService.listAllTasks(boardCode);
     }
 
-    @ApiOperation("Update tasks")
+    @ApiOperation("Update task status")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
-    @PutMapping(path = "{id}")
-    public void updateTask (@PathVariable("id") Long taskId, @RequestParam("newStatusId") Long newStatusId) {
-        taskService.updateStatusTask(taskId, newStatusId);
+    @PutMapping(path = "{task-id}/status")
+    public void updateTask (@RequestParam("board-code") String boardCode,
+                            @PathVariable("task-id") Long taskId,
+                            @RequestParam("newStatusId") Long newStatusId) {
+        taskService.updateStatusTask(boardCode, taskId, newStatusId);
     }
     
     @ApiOperation("Delete tasks")

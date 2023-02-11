@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import br.com.boardpadbackend.entity.StatusEntity;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.service.BoardService;
+import br.com.boardpadbackend.service.StatusService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,11 +33,15 @@ public class TaskServiceImpl implements TaskService {
 
     private BoardService boardService;
     private TaskRepository taskRepository;
+    private StatusService statusService;
 
     @Autowired
-    public TaskServiceImpl(BoardService boardService, TaskRepository taskRepository) {
+    public TaskServiceImpl(BoardService boardService,
+                           TaskRepository taskRepository,
+                           StatusService statusService) {
         this.boardService = boardService;
         this.taskRepository = taskRepository;
+        this.statusService = statusService;
     }
 
     @Override
@@ -49,8 +55,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public void updateStatusTask(Long idTask, Long newStatusId) {
-        taskRepository.updateTaskStatus(idTask, newStatusId);
+    public void updateStatusTask(String boardCode, Long idTask, Long newStatusId) {
+        TaskEntity task = getTaskByBoardCodeAndTaskId(boardCode, idTask);
+        StatusEntity statusFound = statusService.getStatusEntityByBoardCodeAndStatusId(boardCode, newStatusId);
+        task.setStatusEntity(statusFound);
     }
 
     @Transactional
@@ -80,5 +88,15 @@ public class TaskServiceImpl implements TaskService {
     	}catch (EmptyResultDataAccessException e) {
     		throw new RuntimeException("Erro ao encontrar ID da task para deletar");
     	}
+    }
+
+    public TaskEntity getTaskByBoardCodeAndTaskId(String boardCode, Long taskId) {
+        var taskFound = taskRepository.getTaskByBoardCodeAndIdTask(boardCode, taskId);
+        if (taskFound.isEmpty()) throw new NotFoundException("Task ["
+                + taskId
+                + "] not found on board ["
+                + boardCode
+                + "].");
+        return taskFound.get();
     }
 }
