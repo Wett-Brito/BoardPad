@@ -64,13 +64,13 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Override
     public TaskDto createTask(String boardCode, TaskInputDto inputTask) {
+        var foundBoard = boardService.findBoardByBoardCode(boardCode);
         try {
-            var foundBoard = boardService.findBoardByBoardCode(boardCode);
             TaskEntity newTask = taskInputDtoConverter.dtoToEntity(inputTask);
             newTask.setBoard(foundBoard);
             newTask.setDateCreationTask(new Date());
 
-            taskRepository.save(newTask);
+            newTask = taskRepository.save(newTask);
             return taskDtoConverter.entityToDto(newTask);
         }
         catch(Exception ex) {
@@ -83,15 +83,13 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Override
     public void deleteTask(String boardCode, Long taskId) {
+        var taskToDelete = getTaskByBoardCodeAndTaskId(boardCode, taskId);
         try {
-            var taskToDelete = getTaskByBoardCodeAndTaskId(boardCode, taskId);
             taskRepository.delete(taskToDelete);
         }
         catch (Exception ex){
             log.error(ex);
-            if(!(ex instanceof NotFoundException))
-                throw new InternalServerErrorException();
-            else throw new NotFoundException(ex.getMessage());
+            throw new InternalServerErrorException();
         }
     }
 

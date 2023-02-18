@@ -3,6 +3,7 @@ package br.com.boardpadbackend.service.impl;
 import br.com.boardpadbackend.dto.BoardDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.exceptions.BadRequestException;
+import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.repositories.BoardRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -82,6 +83,6 @@ class BoardServiceImplTest {
         when(boardRepository.findByCodeBoard(ArgumentMatchers.eq("board-test")))
                 .thenReturn(Optional.empty());
 
-        assertThrows(BadRequestException.class, () -> boardService.findBoardByBoardCode("board-test") );
+        assertThrows(NotFoundException.class, () -> boardService.findBoardByBoardCode("board-test") );
     }
 }

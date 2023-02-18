@@ -67,7 +67,7 @@ class StatusServiceImplTest {
         when(statusRepository.getStatusByIdAndBoardCode(eq(1L), eq("board-test")))
                 .thenReturn(Optional.of(StatusEntityAndDto.MOCKED_STATUS_ENTITY));
 
-        assertDoesNotThrow(()->statusService.updateStatusName(1L, "new-name", "board-test"));
+        assertDoesNotThrow(()->statusService.updateStatusName(1L, "TO DO", "board-test"));
     }
 
     @Test
@@ -75,7 +75,7 @@ class StatusServiceImplTest {
         when(statusRepository.getStatusByIdAndBoardCode(eq(1L), eq("board-test")))
                 .thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, ()-> statusService
-                .updateStatusName(1L, "new-name", "board-test"));
+                .updateStatusName(1L, "TO DO", "board-test"));
     }
 
     @Test
@@ -84,7 +84,7 @@ class StatusServiceImplTest {
         when(statusRepository.save(any())).thenReturn(StatusEntityAndDto.MOCKED_STATUS_ENTITY);
 
         final var EXPECTED_STATUS = StatusEntityAndDto.MOCKED_STATUS_DTO;
-        final var ACTUAL_STATUS = statusService.createNewStatus("board-test", "new-status");
+        final var ACTUAL_STATUS = statusService.createNewStatus("board-test", "TO DO");
 
         assertEquals(EXPECTED_STATUS,ACTUAL_STATUS);
     }

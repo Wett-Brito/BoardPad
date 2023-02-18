@@ -3,6 +3,7 @@ package br.com.boardpadbackend.service.impl;
 import java.util.Optional;
 
 import br.com.boardpadbackend.exceptions.BadRequestException;
+import br.com.boardpadbackend.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,7 @@ public class BoardServiceImpl implements BoardService {
 
     public BoardEntity findBoardByBoardCode(String boardCode) {
         Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
-        if(foundBoard.isEmpty()) throw new BadRequestException("The board [" + boardCode + "] doesn't exists.");
+        if(foundBoard.isEmpty()) throw new NotFoundException("The board [" + boardCode + "] doesn't exists.");
         return foundBoard.get();
     }
 
