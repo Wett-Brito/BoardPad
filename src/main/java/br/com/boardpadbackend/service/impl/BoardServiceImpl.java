@@ -49,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
 
     public BoardEntity findBoardByBoardCode(String boardCode) {
         Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
-        if(foundBoard.isEmpty()) throw new BadRequestException("The board wasn't created. Please create a board before try create a category");
+        if(foundBoard.isEmpty()) throw new BadRequestException("The board [" + boardCode + "] doesn't exists.");
         return foundBoard.get();
     }
 
