@@ -64,13 +64,13 @@ public class StatusServiceImpl implements StatusService {
     @Transactional
     @Override
     public void deleteStatus(String boardCode, Long idStatus) {
-        taskRepository.setAllStatusNullOfTasksThatBelongsToStatusById(idStatus);
         var statusFound = statusRepository.getStatusByIdAndBoardCode(idStatus, boardCode);
         statusFound.orElseThrow(()-> new NotFoundException("The status ["
                 + idStatus
                 + "] wasn't found on board ["
                 + boardCode
                 + "]"));
+        taskRepository.setAllStatusNullOfTasksThatBelongsToStatusById(idStatus);
         statusFound.ifPresent(entity->statusRepository.delete(entity));
     }
 
