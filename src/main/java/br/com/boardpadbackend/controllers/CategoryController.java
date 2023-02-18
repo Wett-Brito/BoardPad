@@ -66,7 +66,7 @@ public class CategoryController {
             @ApiResponse( code= 500, message = "Internal Server Error. Category wasn't deleted.")
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteCategoryById (@PathVariable("board-code") String boardCode,
+    public ResponseEntity<Void> deleteCategoryById (@RequestParam("board-code") String boardCode,
                                                     @PathVariable("id") Long idCategory) {
         categoryService.deleteCategoryById(boardCode, idCategory);
         
