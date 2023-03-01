@@ -3,6 +3,7 @@ package br.com.boardpadbackend.controllers;
 import java.math.BigInteger;
 import java.util.List;
 
+import br.com.boardpadbackend.dto.GenericResponseDTO;
 import br.com.boardpadbackend.exceptions.BadRequestException;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -56,9 +57,15 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PostMapping
-    public StatusDto createNewStatus(@RequestParam("new-status-name") String statusName,
-                                     @RequestParam("board-code") String boardCode) {
-        return statusService.createNewStatus(boardCode, statusName);
+    public ResponseEntity<GenericResponseDTO<StatusDto>> createNewStatus(@RequestParam("new-status-name") String statusName,
+                                                                        @RequestParam("board-code") String boardCode) {
+        StatusDto createdStatus = statusService.createNewStatus(boardCode, statusName);
+        return ResponseEntity.status(201).body(
+                GenericResponseDTO.<StatusDto>builder()
+                        .status("OK")
+                        .response(createdStatus)
+                        .build()
+        );
     }
 
     @ApiOperation(value = "Deletes a status")
@@ -76,7 +83,7 @@ public class StatusController {
             return ResponseEntity.noContent().build();
         } catch (DataIntegrityViolationException ex) {
             log.error(ex);
-            throw new BadRequestException("Para remover essa coluna de status voce deve primeiro remover suas tarefas.");
+            throw new BadRequestException("To delete this status, you must change the status of all tasks related to this status.");
         } catch (NotFoundException ex) {
             log.error(ex);
             throw new NotFoundException(ex.getMessage());
