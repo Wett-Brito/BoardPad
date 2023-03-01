@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskDto> createNewTask (@RequestBody TaskInputDto inputTask,
                                                   @RequestParam("board-code") String boardCode){
-        return ResponseEntity.ok().body(taskService.createTask(boardCode, inputTask));
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(boardCode, inputTask));
     }
 
     @ApiOperation("List all tasks of specific board")
@@ -56,7 +57,7 @@ public class TaskController {
     @PutMapping(path = "{task-id}/status")
     public void updateTask (@RequestParam("board-code") String boardCode,
                             @PathVariable("task-id") Long taskId,
-                            @RequestParam("newStatusId") Long newStatusId) {
+                            @RequestParam("new-status-id") Long newStatusId) {
         taskService.updateStatusTask(boardCode, taskId, newStatusId);
     }
     
