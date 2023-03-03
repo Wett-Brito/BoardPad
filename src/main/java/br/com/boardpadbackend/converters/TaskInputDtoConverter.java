@@ -20,9 +20,24 @@ public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputD
     @Override
     TaskEntity dtoToEntity(TaskInputDto dto) ;
 
+    @Mappings({
+            @Mapping(target = "title",  source = "titleTask"),
+            @Mapping(target = "description",  source = "descriptionTask"),
+            @Mapping(target = "idStatus",  source = "statusEntity.idStatus"),
+            @Mapping(target = "idCategory",  source = "categoryEntity", qualifiedByName = "getLongIdByCategory")
+    })
+    @Override
+    TaskInputDto entityToDto(TaskEntity entity);
+
     @Named("getCategoryByLongId")
     default CategoryEntity getCategoryByLongId(Long categoryId) {
         if (categoryId == null || categoryId == 0) return null;
         return CategoryEntity.builder().idCategory(categoryId).build();
+    }
+
+    @Named("getLongIdByCategory")
+    default Long getLongIdByCategory(CategoryEntity category) {
+        if (category == null) return 0L;
+        return category.getIdCategory();
     }
 }
