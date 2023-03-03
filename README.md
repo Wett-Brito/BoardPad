@@ -15,12 +15,21 @@ A `Spring Boot Application` that provide resources to [Boardpad - Frontend](http
 
 ### How to Setup
 
-Starts your **MySQL** or **MariaDB** database and create a schema named as **boardpad_db**. (Don't forget to put
-the correct database **user** and **password** at _application.properties_ file)
+---
+You can start/create your own **MySQL** database server, or you can let the 
+`Docker` do all the hard word for you.
 
-Change the `spring.jpa.hibernate.ddl-auto` from **update** to **create-drop** at _application.properties_ file, to the 
-**hibernate** auto-create the database tables and fields.
+#### Manual Way
 
-Run `./gradlew bootRun` on **boardpad-backend** path.
+- Start your local database or choose the datasource changing the existing credentials (`url`, `user` and `password`) at `application.properties` file.
+- You can create a **database/schema** named as **boardpad_db** or let the application do this for you.
+- Run `./gradlew clean build bootRun` on **boardpad-backend** path.
+
+#### Docker way
+Run the following commands on prompt:
+- Build the application with `./gradlew clean build`
+- Start up **MySQL** and the **Spring Boot** app using the command `docker-compose -p [CONTAINER_NAME] up -d`
+
+After configuring the application, the Swagger will be available at [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) 
 
 ---

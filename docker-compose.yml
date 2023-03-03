@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  mysql_db:
+    image: mysql:latest
+    container_name: db-boardpad
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 41673078
+    volumes:
+      - /var/lib/mysql
+  backend:
+    restart: always
+    depends_on:
+      - mysql_db
+    build: .
+    container_name: boardpad-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://app_db:3306/boardpad_db?createDatabaseIfNotExist=true
+    ports:
+      - '8080:8080'
+    links:
+      - mysql_db:app_db
