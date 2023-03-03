@@ -50,13 +50,12 @@ public class CategoryController {
     @ApiResponses({
             @ApiResponse( code= 201, message = "Category created successfully"),
             @ApiResponse( code= 404, message = "Board doesn't exists"),
-            @ApiResponse( code= 500, message = "Internal Server Error. Category wasn't created.")
+            @ApiResponse( code= 500, message = "Internal Server Error.")
     })
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory (@RequestParam("board-code")String boardCode, String newCategoryName) {
+    public ResponseEntity<CategoryDto> createCategory (@RequestParam("board-code")String boardCode,
+                                                       @RequestParam("new-category-name") String newCategoryName) {
         CategoryDto newCategory = categoryService.createCategory(boardCode, newCategoryName);
-        if (newCategory == null || newCategory.getName().isEmpty())
-            throw new InternalServerErrorException("Internal error when tried to create a category");
         return ResponseEntity.status(201).body(newCategory);
     }
     @ApiOperation("Delete a task Category")
