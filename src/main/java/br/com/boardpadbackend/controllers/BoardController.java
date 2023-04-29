@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.controllers;
 
+import br.com.boardpadbackend.dto.GenericResponseDTO;
 import br.com.boardpadbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import javax.websocket.server.PathParam;
 
 @RequestMapping(path = "board")
 @RestController
@@ -57,5 +60,10 @@ public class BoardController {
         return (createdBoard != null)? ResponseEntity.ok().body(createdBoard)
                 : ResponseEntity.internalServerError().body("Erro ao tentar criar board");
     }	    
-    
+
+    @GetMapping("/{board-code}")
+    public ResponseEntity<GenericResponseDTO> boardExists (@PathVariable("board-code") String boardCode) {
+        boardService.findBoardByBoardCode(boardCode);
+        return ResponseEntity.ok().body(GenericResponseDTO.builder().status("OK").response(boardCode).build());
+    }
 }
