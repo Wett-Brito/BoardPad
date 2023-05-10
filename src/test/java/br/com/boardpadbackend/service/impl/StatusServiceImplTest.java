@@ -80,7 +80,7 @@ class StatusServiceImplTest {
 
     @Test
     public void createNewStatus_whenSuccess() {
-        when(boardService.findBoardByBoardCode(eq("board-test"))).thenReturn(BoardEntityAndDto.BOARD_ENTITY);
+        when(boardService.findBoardByBoardCode(eq("board-test"))).thenReturn(BoardEntityAndDto.BOARD_DTO);
         when(statusRepository.save(any())).thenReturn(StatusEntityAndDto.MOCKED_STATUS_ENTITY);
 
         final var EXPECTED_STATUS = StatusEntityAndDto.MOCKED_STATUS_DTO;

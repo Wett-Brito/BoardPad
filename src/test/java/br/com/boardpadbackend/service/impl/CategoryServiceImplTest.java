@@ -38,7 +38,7 @@ class CategoryServiceImplTest {
     }
     @Test
     public void createCategory_whenSuccess() {
-        when(boardService.findBoardByBoardCode(eq("board-test"))).thenReturn(BoardEntityAndDto.BOARD_ENTITY);
+        when(boardService.findBoardByBoardCode(eq("board-test"))).thenReturn(BoardEntityAndDto.BOARD_DTO);
         when(categoryRepository.save(any())).thenReturn(MOCKED_CATEGORY_ENTITY);
 
         var actualCategory = categoryService.createCategory("board-test", "Category Test");

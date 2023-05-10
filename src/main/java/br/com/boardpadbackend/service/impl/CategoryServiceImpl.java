@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.service.impl;
 
+import br.com.boardpadbackend.converters.BoardDtoConverter;
 import br.com.boardpadbackend.dto.CategoryDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.entity.CategoryEntity;
@@ -49,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(String boardCode, String categoryName) {
-        BoardEntity foundBoard = boardService.findBoardByBoardCode(boardCode);
+        BoardEntity foundBoard = BoardDtoConverter.INSTANCE.dtoToEntity(boardService.findBoardByBoardCode(boardCode));
 
         CategoryEntity newEntity = categoryRepository.save(
                 CategoryEntity.builder()

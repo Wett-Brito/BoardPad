@@ -87,7 +87,7 @@ class TaskServiceImplTest {
     @Test
     public void createTask_whenSuccess() {
         when(boardService.findBoardByBoardCode("board-test"))
-                .thenReturn(BoardEntityAndDto.BOARD_ENTITY);
+                .thenReturn(BoardEntityAndDto.BOARD_DTO);
         when(taskRepository.save(any())).thenReturn(TaskEntityAndDto.MOCK_TASK_ENTITY);
 
         final var EXPECTED_RESPONSE = TaskEntityAndDto.MOCK_TASK_DTO;
@@ -121,7 +121,7 @@ class TaskServiceImplTest {
     @Test
     public void createTask_whenInternalServerException() {
         when(boardService.findBoardByBoardCode(eq("board-test")))
-                .thenReturn(BoardEntityAndDto.BOARD_ENTITY);
+                .thenReturn(BoardEntityAndDto.BOARD_DTO);
         when(taskRepository.save(any())).thenThrow(new RuntimeException("MOCKED GENERIC ERROR"));
 
         assertThrows(InternalServerErrorException.class, ()-> taskService.createTask("board-test", TaskInputDto.builder()

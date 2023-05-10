@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import br.com.boardpadbackend.converters.BoardDtoConverter;
 import br.com.boardpadbackend.entity.StatusEntity;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -64,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Override
     public TaskDto createTask(String boardCode, TaskInputDto inputTask) {
-        var foundBoard = boardService.findBoardByBoardCode(boardCode);
+        var foundBoard = BoardDtoConverter.INSTANCE.dtoToEntity(boardService.findBoardByBoardCode(boardCode));
         try {
             TaskEntity newTask = taskInputDtoConverter.dtoToEntity(inputTask);
             newTask.setBoard(foundBoard);
