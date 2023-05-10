@@ -62,8 +62,8 @@ public class BoardController {
     }	    
 
     @GetMapping("/{board-code}")
-    public ResponseEntity<GenericResponseDTO> boardExists (@PathVariable("board-code") String boardCode) {
-        boardService.findBoardByBoardCode(boardCode);
-        return ResponseEntity.ok().body(GenericResponseDTO.builder().status("OK").response(boardCode).build());
+    public ResponseEntity<GenericResponseDTO<BoardDto>> boardExists (@PathVariable("board-code") String boardCode) {
+        BoardDto foundBoard = boardService.getBoardWithAllDataByBoardCode(boardCode);
+        return ResponseEntity.ok().body(GenericResponseDTO.<BoardDto>builder().status("OK").response(foundBoard).build());
     }
 }
