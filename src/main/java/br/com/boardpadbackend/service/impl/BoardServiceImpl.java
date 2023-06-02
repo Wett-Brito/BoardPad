@@ -15,6 +15,7 @@ import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.repositories.CategoryRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.TaskService;
+import br.com.boardpadbackend.useCase.BoardTasksGrouping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,16 +28,12 @@ import static java.util.stream.Collectors.groupingBy;
 @Service
 public class BoardServiceImpl implements BoardService {
     private BoardRepository boardRepository;
-    private TaskRepository taskRepository;
-    private CategoryRepository categoryRepository;
+    private BoardTasksGrouping boardTasksGrouping;
 
     @Autowired
-    public BoardServiceImpl(BoardRepository boardRepository,
-                            TaskRepository taskRepository,
-                            CategoryRepository categoryRepository) {
+    public BoardServiceImpl(BoardRepository boardRepository, BoardTasksGrouping boardTasksGrouping) {
         this.boardRepository = boardRepository;
-        this.taskRepository = taskRepository;
-        this.categoryRepository = categoryRepository;
+        this.boardTasksGrouping = boardTasksGrouping;
     }
 
     @Override
@@ -73,33 +70,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDto getBoardWithAllDataByBoardCode(String boardCode) {
         var foundBoard = this.findBoardByBoardCode(boardCode);
-        // Selects and sets all categories present on board
-        foundBoard.setCategories(
-                categoryRepository.findAllByBoardCode(boardCode).stream()
-                        .map(CategoryDtoConverter.INSTANCE::entityToDto)
-                        .collect(Collectors.toList())
-        );
-
-        // Select all tasks present on board
-        List<TaskDto> tasksFromBoard =
-                taskRepository.findAllWithCategoryAndStatus(boardCode).stream()
-                        .map(TaskDtoConverter.INSTANCE::entityToDto)
-                        .collect(Collectors.toList());
-
-
-        // Group all tasks from board
-        var groupedTasks = tasksFromBoard.stream()
-                .collect(groupingBy(item -> new SynopsisStatus(BigInteger.valueOf(item.getIdStatus()),item.getNameStatus()),
-                                groupingBy(item -> new SynopsisTask(BigInteger.valueOf(item.getId()), item.getTitle())))
-                );
-
-        List<SynopsisStatus> status = new ArrayList<>(groupedTasks.keySet());
-        status.forEach(item -> {
-            item.setTasks(new ArrayList<>(groupedTasks.get(item).keySet()));
-        });
-
-        foundBoard.setStatus(status);
-        return foundBoard;
+        return boardTasksGrouping.getBoard(foundBoard);
     }
 
 }
