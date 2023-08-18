@@ -6,11 +6,15 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import br.com.boardpadbackend.converters.BoardDtoConverter;
+import br.com.boardpadbackend.dto.BoardDto;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.entity.StatusEntity;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.service.BoardService;
 import br.com.boardpadbackend.service.StatusService;
+import br.com.boardpadbackend.useCase.BoardTasksGrouping;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -34,23 +38,26 @@ public class TaskServiceImpl implements TaskService {
     private BoardService boardService;
     private TaskRepository taskRepository;
     private StatusService statusService;
+    private BoardTasksGrouping boardTasksGrouping;
 
     @Autowired
     public TaskServiceImpl(BoardService boardService,
                            TaskRepository taskRepository,
-                           StatusService statusService) {
+                           StatusService statusService,
+                           BoardTasksGrouping boardTasksGrouping) {
         this.boardService = boardService;
         this.taskRepository = taskRepository;
         this.statusService = statusService;
+        this.boardTasksGrouping = boardTasksGrouping;
     }
 
     @Override
-    public List<TaskDto> listAllTasks(String boardCode) {
-        var taskList = taskRepository.findAllWithCategoryAndStatus(boardCode);
+    public List<SynopsisStatus> listAllTasks(String boardCode) {
+        var taskList = boardTasksGrouping.findAndGroupTasksIntoStatus(BoardDto.builder()
+                .codeBoard(boardCode)
+                .build());
         if(taskList.isEmpty()) throw new NotFoundException("No tasks found to board" + boardCode);
-        return taskList.stream()
-                .map(taskDtoConverter::entityToDto)
-                .collect(Collectors.toList());
+        return taskList;
     }
 
     @Transactional
@@ -64,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Override
     public TaskDto createTask(String boardCode, TaskInputDto inputTask) {
-        var foundBoard = boardService.findBoardByBoardCode(boardCode);
+        var foundBoard = BoardDtoConverter.INSTANCE.dtoToEntity(boardService.findBoardByBoardCode(boardCode));
         try {
             TaskEntity newTask = taskInputDtoConverter.dtoToEntity(inputTask);
             newTask.setBoard(foundBoard);

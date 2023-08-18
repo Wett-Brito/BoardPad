@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.service.impl;
 
+import br.com.boardpadbackend.converters.BoardDtoConverter;
 import br.com.boardpadbackend.dto.StatusDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.entity.StatusEntity;
@@ -48,7 +49,7 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     public StatusDto createNewStatus(String boardCode, String statusName) {
-        BoardEntity foundBoard = boardService.findBoardByBoardCode(boardCode);
+        BoardEntity foundBoard = BoardDtoConverter.INSTANCE.dtoToEntity(boardService.findBoardByBoardCode(boardCode));
 
         var newStatus = statusRepository.save(StatusEntity.builder()
                 .nameStatus(statusName)

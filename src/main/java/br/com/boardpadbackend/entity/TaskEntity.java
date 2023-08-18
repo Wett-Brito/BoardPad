@@ -23,7 +23,7 @@ public class TaskEntity {
     @Column(name = "dtcreation_task", nullable = false)
     private Date dateCreationTask;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_status")
     private StatusEntity statusEntity;
 
