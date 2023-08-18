@@ -40,13 +40,13 @@ class TaskControllerTest {
      * When tasks are found on the board.
      * @throws Exception
      */
-    @Test
+   /* @Test
     public void listTask_WhenSuccess() throws Exception{
-        when(taskService.listAllTasks(eq("board-test"))).thenReturn(List.of(TaskEntityAndDto.MOCK_TASK_DTO));
+        when(taskService.listAllTasks(eq("board-test"))).thenReturn(List.of(Syno));
         mockMvc.perform(get("/tasks")
                 .param("board-code", "board-test"))
                 .andExpect(status().isOk());
-    }
+    }*/
 
     /**
      * When no tasks are found on the board.

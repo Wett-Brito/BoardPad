@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.controllers;
 
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import br.com.boardpadbackend.service.TaskService;
@@ -44,7 +45,7 @@ public class TaskController {
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @GetMapping
-    public List<TaskDto> list (@RequestParam("board-code") String boardCode){
+    public List<SynopsisStatus> list (@RequestParam("board-code") String boardCode){
         return taskService.listAllTasks(boardCode);
     }
 

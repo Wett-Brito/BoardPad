@@ -37,19 +37,20 @@ public class BoardTasksGroupingImpl implements BoardTasksGrouping {
         findAndGroupTasksIntoStatus(boardDto);
         return boardDto;
     }
-    private void findAndMapCategories(BoardDto boardDto){
+    public void findAndMapCategories(BoardDto boardDto){
         boardDto.setCategories(
                 categoryRepository.findAllByBoardCode(boardDto.getCodeBoard()).stream()
                         .map(CategoryDtoConverter.INSTANCE::entityToDto)
                         .collect(Collectors.toList())
         );
     }
-    private void findAndGroupTasksIntoStatus(BoardDto boardDto) {
+    public List<SynopsisStatus> findAndGroupTasksIntoStatus(BoardDto boardDto) {
         List<TaskDto> tasksFromBoard = findTasksWithAllData(boardDto.getCodeBoard());
         // Find all status os tasks
         List<SynopsisStatus> synopsisStatusList = filterStatusFromTaskDto(tasksFromBoard);
         groupAllSynopsisTasksIntoSynopsisStatus(synopsisStatusList, tasksFromBoard);
         boardDto.setStatus(synopsisStatusList);
+        return synopsisStatusList;
     }
 
     /**
