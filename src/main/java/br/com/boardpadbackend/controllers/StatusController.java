@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import br.com.boardpadbackend.dto.GenericResponseDTO;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.exceptions.BadRequestException;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -107,5 +108,15 @@ public class StatusController {
     ) {
         statusService.updateStatusName(idStatus, newStatusName, boardCode);
         return ResponseEntity.ok().body("Successfully updated.");
+    }
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "The status doesn't exists "),
+            @ApiResponse(code = 500, message = "Server error, please try later.")
+    })
+    @GetMapping("{id}")
+    public ResponseEntity<SynopsisStatus> getStatusById(@PathVariable("id") Long statusId) {
+        var response = statusService.getStatusById(statusId);
+        return ResponseEntity.ok(response);
     }
 }

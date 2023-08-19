@@ -18,4 +18,5 @@ public interface StatusRepository extends JpaRepository<StatusEntity, Long> {
             " AND status.board.codeBoard = :boardCode")
     Optional<StatusEntity> getStatusByIdAndBoardCode(Long statusId, String boardCode);
 
+    Optional<StatusEntity> getStatusEntityByIdStatus(Long idStatus);
 }
