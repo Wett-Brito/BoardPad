@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StatusRepository extends JpaRepository<StatusEntity, Long> {
-    @Query("SELECT status FROM StatusEntity status WHERE status.board.codeBoard = :boardCode")
+    @Query("SELECT status FROM StatusEntity status WHERE status.board.codeBoard = :boardCode ORDER BY status.idStatus ASC")
     List<StatusEntity> listAllStatusFromBoardCode(String boardCode);
 
     @Query("SELECT status FROM StatusEntity status " +
