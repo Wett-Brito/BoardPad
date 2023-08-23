@@ -64,7 +64,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateStatusTask(String boardCode, Long idTask, Long newStatusId) {
         TaskEntity task = getTaskByBoardCodeAndTaskId(boardCode, idTask);
-        StatusEntity statusFound = statusService.getStatusEntityByBoardCodeAndStatusId(boardCode, newStatusId);
+        StatusEntity statusFound = null;
+        if(newStatusId != null && newStatusId > 0L)
+            statusFound = statusService.getStatusEntityByBoardCodeAndStatusId(boardCode, newStatusId);
         task.setStatusEntity(statusFound);
     }
 

@@ -21,7 +21,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     @Query("SELECT task FROM TaskEntity task " +
             "INNER JOIN FETCH task.board " +
             "LEFT JOIN FETCH task.categoryEntity " +
-            "INNER JOIN FETCH task.statusEntity " +
+            "LEFT JOIN FETCH task.statusEntity " +
             "WHERE task.board.codeBoard = :boardCode " +
             "AND task.idTask = :idTask"
     )
