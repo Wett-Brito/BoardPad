@@ -1,6 +1,7 @@
 package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.converters.TaskInputDtoConverter;
+import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -201,5 +203,18 @@ class TaskControllerTest {
                         .queryParam("board-code", "board-test")
                         .contentType("application/json"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void getTAskById_whenSuccess() throws Exception{
+        when(taskService.getTaskById(eq(BigInteger.ONE))).thenReturn(TaskDto.builder().id(1L).build());
+        mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void getTAskById_whenNotFound() throws Exception{
+        when(taskService.getTaskById(eq(BigInteger.ONE))).thenThrow(new NotFoundException("Task not found"));
+        mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().isNotFound());
     }
 }

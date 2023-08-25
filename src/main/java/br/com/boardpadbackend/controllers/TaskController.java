@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.controllers;
 
+import br.com.boardpadbackend.dto.GenericResponseDTO;
 import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @RequestMapping(path = "/tasks")
@@ -75,5 +77,21 @@ public class TaskController {
         taskService.deleteTask(boardCode, taskId);
         
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation("Get Task By Id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Task found"),
+            @ApiResponse(code = 404, message = "Task not found"),
+            @ApiResponse(code = 500, message = "Internal server error. Task wasn't deleted")
+    })
+    @GetMapping(path = "{task-id}")
+    public ResponseEntity<GenericResponseDTO<TaskDto>> getTaskById (@PathVariable("task-id") BigInteger taskId){
+        TaskDto taskFound = taskService.getTaskById(taskId);
+        return ResponseEntity.ok(GenericResponseDTO
+                .<TaskDto>builder()
+                .status("Task found")
+                .response(taskFound)
+                .build());
     }
 }

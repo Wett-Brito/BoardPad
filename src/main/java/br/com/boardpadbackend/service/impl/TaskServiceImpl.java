@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.service.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,5 +111,14 @@ public class TaskServiceImpl implements TaskService {
                 + boardCode
                 + "].");
         return taskFound.get();
+    }
+
+    @Override
+    public TaskDto getTaskById(BigInteger taskId) {
+        var taskFound = taskRepository.findById(taskId.longValue());
+        if(taskFound.isEmpty())
+            throw new NotFoundException("Task with id [" + taskId.longValue() + "] was not found.");
+
+        return TaskDtoConverter.INSTANCE.entityToDto(taskFound.get());
     }
 }

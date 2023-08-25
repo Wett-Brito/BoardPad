@@ -102,12 +102,12 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PutMapping(path = "{id}")
-    public ResponseEntity<?> updateStatusName (@PathVariable("id") Long idStatus,
+    public ResponseEntity<GenericResponseDTO> updateStatusName (@PathVariable("id") Long idStatus,
                                                @RequestParam(name = "new-name") String newStatusName,
                                                @RequestParam(name = "board-code") String boardCode
     ) {
         statusService.updateStatusName(idStatus, newStatusName, boardCode);
-        return ResponseEntity.ok().body("Successfully updated.");
+        return ResponseEntity.ok().body(GenericResponseDTO.builder().status("200 OK").message("Successfully updated.").build());
     }
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
