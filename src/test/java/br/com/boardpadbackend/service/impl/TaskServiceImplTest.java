@@ -179,4 +179,18 @@ class TaskServiceImplTest {
         when(taskRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, ()-> taskService.getTaskById(BigInteger.ONE));
     }
+
+    @Test
+    public void updateTaskDataWhenSuccess() {
+        when(taskRepository.findById(any())).thenReturn(Optional.of(TaskEntityAndDto.MOCK_TASK_ENTITY));
+        when(taskRepository.save(any())).thenReturn(TaskEntityAndDto.MOCK_TASK_ENTITY);
+        assertDoesNotThrow(()-> taskService.updateTaskById(BigInteger.ONE, new TaskInputDto()));
+    }
+
+    @Test
+    public void updateTaskDataWhenTaskDoesntExists() {
+        when(taskRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,()-> taskService.updateTaskById(BigInteger.ONE, new TaskInputDto()));
+    }
 }

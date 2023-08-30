@@ -5,7 +5,9 @@ import br.com.boardpadbackend.entity.CategoryEntity;
 import br.com.boardpadbackend.entity.TaskEntity;
 import jdk.jfr.Name;
 import org.mapstruct.*;
+import org.mapstruct.ap.shaded.freemarker.template.utility.StringUtil;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.StringUtils;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputDto> {
@@ -39,5 +41,13 @@ public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputD
     default Long getLongIdByCategory(CategoryEntity category) {
         if (category == null) return 0L;
         return category.getIdCategory();
+    }
+
+    default void dtoToUpdatableEntity(TaskEntity entity, TaskInputDto dto) {
+        if(StringUtils.hasText(dto.getTitle()))
+            entity.setTitleTask(dto.getTitle());
+
+        if(StringUtils.hasText(dto.getDescription()))
+            entity.setDescriptionTask(dto.getDescription());
     }
 }

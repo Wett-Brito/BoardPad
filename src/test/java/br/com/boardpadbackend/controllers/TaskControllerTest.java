@@ -217,4 +217,24 @@ class TaskControllerTest {
         mockMvc.perform(get("/tasks/1"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void updateTaskWhenSuccess() throws Exception{
+        doNothing().when(taskService).updateTaskById(eq(BigInteger.ONE), any());
+        TaskInputDto taskInputDto = TaskInputDtoConverter.INSTANCE.entityToDto(TaskEntityAndDto.MOCK_TASK_ENTITY);
+        mockMvc.perform(put("/tasks/1")
+                        .content(objectMapper.writeValueAsString(taskInputDto))
+                        .contentType("application/json"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateTaskWhenTaskDoesntExists() throws Exception{
+        doThrow(NotFoundException.class).when(taskService).updateTaskById(eq(BigInteger.ONE), any());
+        TaskInputDto taskInputDto = TaskInputDtoConverter.INSTANCE.entityToDto(TaskEntityAndDto.MOCK_TASK_ENTITY);
+        mockMvc.perform(put("/tasks/1")
+                        .content(objectMapper.writeValueAsString(taskInputDto))
+                        .contentType("application/json"))
+                .andExpect(status().isNotFound());
+    }
 }

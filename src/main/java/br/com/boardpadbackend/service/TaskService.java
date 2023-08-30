@@ -13,4 +13,5 @@ public interface TaskService {
     TaskDto createTask(String boardCode, TaskInputDto inputTask);
     void deleteTask(String boardCode, Long idTask);
     TaskDto getTaskById (BigInteger taskId);
+    void updateTaskById(BigInteger taskId, TaskInputDto task);
 }

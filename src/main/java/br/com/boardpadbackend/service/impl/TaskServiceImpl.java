@@ -121,4 +121,17 @@ public class TaskServiceImpl implements TaskService {
 
         return TaskDtoConverter.INSTANCE.entityToDto(taskFound.get());
     }
+
+    @Transactional
+    @Override
+    public void updateTaskById(BigInteger taskId, TaskInputDto taskInput) {
+        var taskFoundOp = taskRepository.findById(taskId.longValue());
+        if(taskFoundOp.isEmpty())
+            throw new NotFoundException("Task with id [" + taskId.longValue() + "] was not found.");
+        var updatingTask = taskFoundOp.get();
+        // keeps the status and creation date of "old" task value.
+        TaskInputDtoConverter.INSTANCE.dtoToUpdatableEntity(updatingTask,taskInput);
+
+        taskRepository.saveAndFlush(updatingTask);
+    }
 }
