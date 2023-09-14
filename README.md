@@ -1,6 +1,9 @@
 # Boardpad - Backend
 
-A `Spring Boot Application` that provide resources to [Boardpad - Frontend](https://github.com/Wett-Brito/Boardpad-front)
+That's a `Spring Boot` backend application that provides resources to Boardpad Angular app.
+
+If you want to see more details of Boardpad functionalities and how it works, please visit the 
+[Boardpad Frontend](https://github.com/GustavoReinaldi/Boardpad-Front) repository.
 
 ---
 
