@@ -8,6 +8,7 @@ import br.com.boardpadbackend.dto.SynopsisTask;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.repositories.BoardRepository;
 import br.com.boardpadbackend.repositories.CategoryRepository;
+import br.com.boardpadbackend.repositories.StatusRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.BoardService;
 import br.com.boardpadbackend.useCase.BoardTasksGrouping;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +24,15 @@ import java.util.stream.Collectors;
 public class BoardTasksGroupingImpl implements BoardTasksGrouping {
     private TaskRepository taskRepository;
     private CategoryRepository categoryRepository;
+    private StatusRepository statusRepository;
 
     @Autowired
     public BoardTasksGroupingImpl(TaskRepository taskRepository,
-                                  CategoryRepository categoryRepository) {
+                                  CategoryRepository categoryRepository,
+                                  StatusRepository statusRepository) {
         this.taskRepository = taskRepository;
         this.categoryRepository = categoryRepository;
+        this.statusRepository = statusRepository;
     }
 
     @Override
@@ -46,8 +51,8 @@ public class BoardTasksGroupingImpl implements BoardTasksGrouping {
     }
     public List<SynopsisStatus> findAndGroupTasksIntoStatus(BoardDto boardDto) {
         List<TaskDto> tasksFromBoard = findTasksWithAllData(boardDto.getCodeBoard());
-        // Find all status os tasks
-        List<SynopsisStatus> synopsisStatusList = filterStatusFromTaskDto(tasksFromBoard);
+        // Find all status of tasks
+        List<SynopsisStatus> synopsisStatusList = filterStatusFromTaskDto(boardDto.getCodeBoard(),tasksFromBoard);
         groupAllSynopsisTasksIntoSynopsisStatus(synopsisStatusList, tasksFromBoard);
         boardDto.setStatus(synopsisStatusList);
         return synopsisStatusList;
@@ -69,20 +74,21 @@ public class BoardTasksGroupingImpl implements BoardTasksGrouping {
      * @param tasksFromBoard
      * @return
      */
-    private List<SynopsisStatus> filterStatusFromTaskDto(List<TaskDto> tasksFromBoard) {
-        return tasksFromBoard.stream()
-                .map(item -> {
-                    if (item.getIdStatus() == null) {
-                        item.setIdStatus(0L);
-                        item.setNameStatus("Unparented");
-                    }
-                    return SynopsisStatus.builder()
-                            .id(BigInteger.valueOf(item.getIdStatus()))
-                            .name(item.getNameStatus())
-                            .build();
-                })
-                .distinct()
+    private List<SynopsisStatus> filterStatusFromTaskDto(String boardCode, List<TaskDto> tasksFromBoard) {
+        var synopsisStatusList = this.statusRepository
+                .listAllStatusFromBoardCode(boardCode)
+                .stream()
+                .map(item -> SynopsisStatus.builder()
+                        .id(BigInteger.valueOf(item.getIdStatus()))
+                        .name(item.getNameStatus())
+                        .build())
                 .collect(Collectors.toList());
+
+        synopsisStatusList.add(0, SynopsisStatus.builder()
+                .id(BigInteger.ZERO)
+                .name("Unparented")
+                .build());
+        return synopsisStatusList;
     }
 
     /**
@@ -94,15 +100,18 @@ public class BoardTasksGroupingImpl implements BoardTasksGrouping {
             List<SynopsisStatus> synopsisStatusList,
             List<TaskDto> tasksFromBoard
     ){
-        synopsisStatusList.forEach(item -> {
+        synopsisStatusList.forEach(statusItem -> {
             List<SynopsisTask> synopsisTasks = tasksFromBoard.stream()
-                    .filter(task -> item.getId().equals(BigInteger.valueOf(task.getIdStatus())))
+                    .filter(taskItem -> {
+                        if(taskItem.getIdStatus() == null) taskItem.setIdStatus(0L);
+                        return statusItem.getId().equals(BigInteger.valueOf(taskItem.getIdStatus()));
+                    })
                     .map(task -> SynopsisTask.builder()
                             .id(BigInteger.valueOf(task.getId()))
                             .title(task.getTitle())
                             .build())
                     .collect(Collectors.toList());
-            item.setTasks(synopsisTasks);
+            statusItem.setTasks(synopsisTasks);
         });
     }
 

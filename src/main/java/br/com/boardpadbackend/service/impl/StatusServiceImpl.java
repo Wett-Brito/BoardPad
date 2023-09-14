@@ -2,18 +2,23 @@ package br.com.boardpadbackend.service.impl;
 
 import br.com.boardpadbackend.converters.BoardDtoConverter;
 import br.com.boardpadbackend.dto.StatusDto;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.entity.StatusEntity;
+import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.repositories.StatusRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.BoardService;
 import br.com.boardpadbackend.service.StatusService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,5 +94,16 @@ public class StatusServiceImpl implements StatusService {
                 + boardCode
                 + "]");
         return statusEntity.get();
+    }
+
+    @Override
+    public SynopsisStatus getStatusById(Long statusId) {
+        Optional<StatusEntity> statusFound = statusRepository.getStatusEntityByIdStatus(statusId);
+        if (statusFound.isEmpty())
+            throw new NotFoundException("Status com o id [" + statusId + "] não encontrado.");
+        return SynopsisStatus.builder()
+                .id(BigInteger.valueOf(statusFound.get().getIdStatus()))
+                .name(statusFound.get().getNameStatus())
+                .build();
     }
 }

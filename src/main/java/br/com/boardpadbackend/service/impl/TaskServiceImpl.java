@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.service.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,7 +65,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateStatusTask(String boardCode, Long idTask, Long newStatusId) {
         TaskEntity task = getTaskByBoardCodeAndTaskId(boardCode, idTask);
-        StatusEntity statusFound = statusService.getStatusEntityByBoardCodeAndStatusId(boardCode, newStatusId);
+        StatusEntity statusFound = null;
+        if(newStatusId != null && newStatusId > 0L)
+            statusFound = statusService.getStatusEntityByBoardCodeAndStatusId(boardCode, newStatusId);
         task.setStatusEntity(statusFound);
     }
 
@@ -108,5 +111,27 @@ public class TaskServiceImpl implements TaskService {
                 + boardCode
                 + "].");
         return taskFound.get();
+    }
+
+    @Override
+    public TaskDto getTaskById(BigInteger taskId) {
+        var taskFound = taskRepository.findById(taskId.longValue());
+        if(taskFound.isEmpty())
+            throw new NotFoundException("Task with id [" + taskId.longValue() + "] was not found.");
+
+        return TaskDtoConverter.INSTANCE.entityToDto(taskFound.get());
+    }
+
+    @Transactional
+    @Override
+    public void updateTaskById(BigInteger taskId, TaskInputDto taskInput) {
+        var taskFoundOp = taskRepository.findById(taskId.longValue());
+        if(taskFoundOp.isEmpty())
+            throw new NotFoundException("Task with id [" + taskId.longValue() + "] was not found.");
+        var updatingTask = taskFoundOp.get();
+        // keeps the status and creation date of "old" task value.
+        TaskInputDtoConverter.INSTANCE.dtoToUpdatableEntity(updatingTask,taskInput);
+
+        taskRepository.saveAndFlush(updatingTask);
     }
 }
