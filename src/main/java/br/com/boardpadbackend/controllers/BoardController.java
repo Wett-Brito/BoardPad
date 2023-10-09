@@ -1,7 +1,6 @@
 package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.dto.GenericResponseDTO;
-import br.com.boardpadbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

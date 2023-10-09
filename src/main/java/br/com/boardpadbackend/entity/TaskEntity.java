@@ -27,10 +27,6 @@ public class TaskEntity {
     @JoinColumn(name = "id_status")
     private StatusEntity statusEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_category")
-    private CategoryEntity categoryEntity;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn (name = "id_board", referencedColumnName = "id_board", nullable = false)
     private BoardEntity board;

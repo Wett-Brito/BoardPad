@@ -14,6 +14,5 @@ import java.util.List;
 public class BoardDto {
     private Long id;
     private String codeBoard;
-    private List<CategoryDto> categories;
     private List<SynopsisStatus> status;
 }

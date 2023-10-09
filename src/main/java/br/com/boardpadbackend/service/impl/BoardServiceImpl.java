@@ -7,14 +7,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import br.com.boardpadbackend.converters.BoardDtoConverter;
-import br.com.boardpadbackend.converters.CategoryDtoConverter;
-import br.com.boardpadbackend.converters.TaskDtoConverter;
+
 import br.com.boardpadbackend.dto.*;
-import br.com.boardpadbackend.entity.TaskEntity;
 import br.com.boardpadbackend.exceptions.NotFoundException;
-import br.com.boardpadbackend.repositories.CategoryRepository;
-import br.com.boardpadbackend.repositories.TaskRepository;
-import br.com.boardpadbackend.service.TaskService;
 import br.com.boardpadbackend.useCase.BoardTasksGrouping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +17,6 @@ import org.springframework.stereotype.Service;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.repositories.BoardRepository;
 import br.com.boardpadbackend.service.BoardService;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class BoardServiceImpl implements BoardService {
