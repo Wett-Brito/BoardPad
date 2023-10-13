@@ -23,8 +23,3 @@ services:
       - '8080:8080'
     links:
       - mysql_db:app_db
-  frontend:
-    image: boardpad-front:latest
-    restart: always
-    ports:
-      - '4200:80'
