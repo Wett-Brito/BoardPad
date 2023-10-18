@@ -1,11 +1,8 @@
 package br.com.boardpadbackend.converters;
 
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
-import br.com.boardpadbackend.entity.CategoryEntity;
 import br.com.boardpadbackend.entity.TaskEntity;
-import jdk.jfr.Name;
 import org.mapstruct.*;
-import org.mapstruct.ap.shaded.freemarker.template.utility.StringUtil;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.StringUtils;
 
@@ -16,8 +13,7 @@ public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputD
     @Mappings({
             @Mapping(target = "titleTask", source = "title"),
             @Mapping(target = "descriptionTask", source = "description"),
-            @Mapping(target = "statusEntity.idStatus", source = "idStatus"),
-            @Mapping(target = "categoryEntity", source = "idCategory", qualifiedByName = "getCategoryByLongId")
+            @Mapping(target = "statusEntity.idStatus", source = "idStatus")
     })
     @Override
     TaskEntity dtoToEntity(TaskInputDto dto) ;
@@ -25,23 +21,10 @@ public interface TaskInputDtoConverter extends Converter <TaskEntity, TaskInputD
     @Mappings({
             @Mapping(target = "title",  source = "titleTask"),
             @Mapping(target = "description",  source = "descriptionTask"),
-            @Mapping(target = "idStatus",  source = "statusEntity.idStatus"),
-            @Mapping(target = "idCategory",  source = "categoryEntity", qualifiedByName = "getLongIdByCategory")
+            @Mapping(target = "idStatus",  source = "statusEntity.idStatus")
     })
     @Override
     TaskInputDto entityToDto(TaskEntity entity);
-
-    @Named("getCategoryByLongId")
-    default CategoryEntity getCategoryByLongId(Long categoryId) {
-        if (categoryId == null || categoryId == 0) return null;
-        return CategoryEntity.builder().idCategory(categoryId).build();
-    }
-
-    @Named("getLongIdByCategory")
-    default Long getLongIdByCategory(CategoryEntity category) {
-        if (category == null) return 0L;
-        return category.getIdCategory();
-    }
 
     default void dtoToUpdatableEntity(TaskEntity entity, TaskInputDto dto) {
         if(StringUtils.hasText(dto.getTitle()))

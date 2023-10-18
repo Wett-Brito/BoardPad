@@ -1,13 +1,11 @@
 package br.com.boardpadbackend.useCase.impl;
 
-import br.com.boardpadbackend.converters.CategoryDtoConverter;
 import br.com.boardpadbackend.converters.TaskDtoConverter;
 import br.com.boardpadbackend.dto.BoardDto;
 import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.dto.SynopsisTask;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.repositories.BoardRepository;
-import br.com.boardpadbackend.repositories.CategoryRepository;
 import br.com.boardpadbackend.repositories.StatusRepository;
 import br.com.boardpadbackend.repositories.TaskRepository;
 import br.com.boardpadbackend.service.BoardService;
@@ -23,31 +21,20 @@ import java.util.stream.Collectors;
 @Component("BoardTasksGroupingImpl")
 public class BoardTasksGroupingImpl implements BoardTasksGrouping {
     private TaskRepository taskRepository;
-    private CategoryRepository categoryRepository;
     private StatusRepository statusRepository;
 
     @Autowired
     public BoardTasksGroupingImpl(TaskRepository taskRepository,
-                                  CategoryRepository categoryRepository,
                                   StatusRepository statusRepository) {
         this.taskRepository = taskRepository;
-        this.categoryRepository = categoryRepository;
         this.statusRepository = statusRepository;
     }
 
     @Override
     public BoardDto getBoard(BoardDto boardDto) {
         // Selects and sets all categories present on board
-        findAndMapCategories(boardDto);
         findAndGroupTasksIntoStatus(boardDto);
         return boardDto;
-    }
-    public void findAndMapCategories(BoardDto boardDto){
-        boardDto.setCategories(
-                categoryRepository.findAllByBoardCode(boardDto.getCodeBoard()).stream()
-                        .map(CategoryDtoConverter.INSTANCE::entityToDto)
-                        .collect(Collectors.toList())
-        );
     }
     public List<SynopsisStatus> findAndGroupTasksIntoStatus(BoardDto boardDto) {
         List<TaskDto> tasksFromBoard = findTasksWithAllData(boardDto.getCodeBoard());

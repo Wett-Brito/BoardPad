@@ -12,7 +12,6 @@ import br.com.boardpadbackend.entity.TaskEntity;
 public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     @Query("SELECT task FROM TaskEntity task " +
             "LEFT JOIN FETCH task.statusEntity " +
-            "LEFT JOIN FETCH task.categoryEntity " +
             "WHERE task.board.codeBoard = :boardCode " +
             "ORDER BY task.idTask asc, task.dateCreationTask asc")
     List<TaskEntity> findAllWithCategoryAndStatus(String boardCode);
@@ -20,7 +19,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
 
     @Query("SELECT task FROM TaskEntity task " +
             "INNER JOIN FETCH task.board " +
-            "LEFT JOIN FETCH task.categoryEntity " +
             "LEFT JOIN FETCH task.statusEntity " +
             "WHERE task.board.codeBoard = :boardCode " +
             "AND task.idTask = :idTask"
@@ -30,9 +28,5 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long>{
     @Modifying
     @Query(value = "UPDATE TaskEntity task SET task.statusEntity = null WHERE task.statusEntity.idStatus = :idStatus")
     void setAllStatusNullOfTasksThatBelongsToStatusById(Long idStatus);
-    
-    @Modifying
-    @Query("UPDATE TaskEntity task SET task.categoryEntity.idCategory = null WHERE task.categoryEntity.idCategory = :idCategory ")
-    void updateTaskCategoryToNull(Long idCategory);
     
 }

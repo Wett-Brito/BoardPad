@@ -96,7 +96,6 @@ class TaskServiceImplTest {
 
         final var EXPECTED_RESPONSE = TaskEntityAndDto.MOCK_TASK_DTO;
         final var ACTUAL_RESPONSE = taskService.createTask("board-test", TaskInputDto.builder()
-                .idCategory(1L)
                 .idStatus(1L)
                 .idStatus(1L)
                 .title(EXPECTED_RESPONSE.getTitle())
@@ -112,7 +111,6 @@ class TaskServiceImplTest {
                 .thenThrow(new NotFoundException("The board [board-test] doesn't exists."));
 
         assertThrows(NotFoundException.class, ()-> taskService.createTask("board-test", TaskInputDto.builder()
-                .idCategory(1L)
                 .idStatus(1L)
                 .idStatus(1L)
                 .title(TaskEntityAndDto.MOCK_TASK_DTO.getTitle())
@@ -129,7 +127,6 @@ class TaskServiceImplTest {
         when(taskRepository.save(any())).thenThrow(new RuntimeException("MOCKED GENERIC ERROR"));
 
         assertThrows(InternalServerErrorException.class, ()-> taskService.createTask("board-test", TaskInputDto.builder()
-                .idCategory(1L)
                 .idStatus(1L)
                 .idStatus(1L)
                 .title(TaskEntityAndDto.MOCK_TASK_DTO.getTitle())
