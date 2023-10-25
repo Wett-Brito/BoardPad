@@ -14,7 +14,6 @@ public class TaskEntityAndDto {
             .titleTask("Lorem Ipsum")
             .descriptionTask("Is simply dummy text of the printing and typesetting industry")
             .dateCreationTask(Date.valueOf("2023-02-18"))
-            .categoryEntity(CategoryEntityAndDto.MOCKED_CATEGORY_ENTITY)
             .board(BoardEntityAndDto.BOARD_ENTITY)
             .statusEntity(StatusEntityAndDto.MOCKED_STATUS_ENTITY)
             .build();

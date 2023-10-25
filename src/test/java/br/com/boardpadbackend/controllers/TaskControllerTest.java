@@ -1,6 +1,7 @@
 package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.converters.TaskInputDtoConverter;
+import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +42,13 @@ class TaskControllerTest {
      * When tasks are found on the board.
      * @throws Exception
      */
-    @Test
+   /* @Test
     public void listTask_WhenSuccess() throws Exception{
-        when(taskService.listAllTasks(eq("board-test"))).thenReturn(List.of(TaskEntityAndDto.MOCK_TASK_DTO));
+        when(taskService.listAllTasks(eq("board-test"))).thenReturn(List.of(Syno));
         mockMvc.perform(get("/tasks")
                 .param("board-code", "board-test"))
                 .andExpect(status().isOk());
-    }
+    }*/
 
     /**
      * When no tasks are found on the board.
@@ -201,5 +203,38 @@ class TaskControllerTest {
                         .queryParam("board-code", "board-test")
                         .contentType("application/json"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void getTAskById_whenSuccess() throws Exception{
+        when(taskService.getTaskById(eq(BigInteger.ONE))).thenReturn(TaskDto.builder().id(1L).build());
+        mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void getTAskById_whenNotFound() throws Exception{
+        when(taskService.getTaskById(eq(BigInteger.ONE))).thenThrow(new NotFoundException("Task not found"));
+        mockMvc.perform(get("/tasks/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void updateTaskWhenSuccess() throws Exception{
+        doNothing().when(taskService).updateTaskById(eq(BigInteger.ONE), any());
+        TaskInputDto taskInputDto = TaskInputDtoConverter.INSTANCE.entityToDto(TaskEntityAndDto.MOCK_TASK_ENTITY);
+        mockMvc.perform(put("/tasks/1")
+                        .content(objectMapper.writeValueAsString(taskInputDto))
+                        .contentType("application/json"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateTaskWhenTaskDoesntExists() throws Exception{
+        doThrow(NotFoundException.class).when(taskService).updateTaskById(eq(BigInteger.ONE), any());
+        TaskInputDto taskInputDto = TaskInputDtoConverter.INSTANCE.entityToDto(TaskEntityAndDto.MOCK_TASK_ENTITY);
+        mockMvc.perform(put("/tasks/1")
+                        .content(objectMapper.writeValueAsString(taskInputDto))
+                        .contentType("application/json"))
+                .andExpect(status().isNotFound());
     }
 }

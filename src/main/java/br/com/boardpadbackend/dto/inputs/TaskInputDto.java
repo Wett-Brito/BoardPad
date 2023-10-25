@@ -21,6 +21,4 @@ public class TaskInputDto {
     @ApiParam(name = "Id of task status")
     @NotNull
     private Long idStatus;
-    @ApiParam(name = "Id of task category")
-    private Long idCategory;
 }

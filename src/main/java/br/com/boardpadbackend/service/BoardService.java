@@ -5,5 +5,6 @@ import br.com.boardpadbackend.entity.BoardEntity;
 
 public interface BoardService {
     BoardDto createBoard (String boardCode);
-    BoardEntity findBoardByBoardCode(String boardCode);
+    BoardDto findBoardByBoardCode(String boardCode);
+    BoardDto getBoardWithAllDataByBoardCode(String boardConde);
 }

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import br.com.boardpadbackend.dto.GenericResponseDTO;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.exceptions.BadRequestException;
 import br.com.boardpadbackend.exceptions.InternalServerErrorException;
 import br.com.boardpadbackend.exceptions.NotFoundException;
@@ -101,11 +102,21 @@ public class StatusController {
             @ApiResponse(code = 500, message = "Server error, please try later.")
     })
     @PutMapping(path = "{id}")
-    public ResponseEntity<?> updateStatusName (@PathVariable("id") Long idStatus,
+    public ResponseEntity<GenericResponseDTO> updateStatusName (@PathVariable("id") Long idStatus,
                                                @RequestParam(name = "new-name") String newStatusName,
                                                @RequestParam(name = "board-code") String boardCode
     ) {
         statusService.updateStatusName(idStatus, newStatusName, boardCode);
-        return ResponseEntity.ok().body("Successfully updated.");
+        return ResponseEntity.ok().body(GenericResponseDTO.builder().status("200 OK").message("Successfully updated.").build());
+    }
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "The status doesn't exists "),
+            @ApiResponse(code = 500, message = "Server error, please try later.")
+    })
+    @GetMapping("{id}")
+    public ResponseEntity<SynopsisStatus> getStatusById(@PathVariable("id") Long statusId) {
+        var response = statusService.getStatusById(statusId);
+        return ResponseEntity.ok(response);
     }
 }

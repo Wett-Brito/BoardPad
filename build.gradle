@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 group = 'br.com'
@@ -25,6 +26,7 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.jacoco:org.jacoco.agent:0.8.7'
     implementation("io.springfox:springfox-swagger2:2.9.2") {
         exclude module: 'swagger-models'
     }
@@ -38,4 +40,67 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+jacoco {
+    toolVersion = '0.8.7'
+    reportsDir = file("$buildDir/reports/jacoco")
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/br/com/boardpadbackend/config/**',
+                    '**/br/com/boardpadbackend/dto/**',
+                    '**/br/com/boardpadbackend/entity/**',
+                    '**/br/com/boardpadbackend/converters/**',
+                    '**/br/com/boardpadbackend/exceptions/**',
+                    '**/br/com/boardpadbackend/repositories/**'
+            ])
+        }))
+    }
+}
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 1
+            }
+            excludes = [
+                    '**/br/com/boardpadbackend/config/**',
+                    '**/br/com/boardpadbackend/dto/**',
+                    '**/br/com/boardpadbackend/entity/**',
+                    '**/br/com/boardpadbackend/converters/**',
+                    '**/br/com/boardpadbackend/exceptions/**',
+                    '**/br/com/boardpadbackend/repositories/**',
+                    '**/br/com/boardpadbackend/*'
+            ]
+        }
+        rule {
+            limit {
+                counter = 'INSTRUCTIONS'
+                value = 'MISSEDRATIO'
+                minimum = 0.3
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
 }

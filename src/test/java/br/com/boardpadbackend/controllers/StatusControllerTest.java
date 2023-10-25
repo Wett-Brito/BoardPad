@@ -2,6 +2,7 @@ package br.com.boardpadbackend.controllers;
 
 import br.com.boardpadbackend.dto.GenericResponseDTO;
 import br.com.boardpadbackend.dto.StatusDto;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.exceptions.NotFoundException;
 import br.com.boardpadbackend.mockedclasses.StatusEntityAndDto;
 import br.com.boardpadbackend.service.StatusService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -200,5 +202,26 @@ class StatusControllerTest {
                                                 .build()
                                 )
                         ));
+    }
+
+    @Test
+    public void getStatusById_WhenFound() throws Exception{
+        when(statusService.getStatusById(eq(1L)))
+                .thenReturn(
+                        SynopsisStatus.builder()
+                                .id(BigInteger.ONE)
+                                .name("To Do")
+                                .build());
+
+        mockMvc.perform(get("/status/1"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void getStatusById_WhenNotFound() throws Exception{
+        when(statusService.getStatusById(eq(1L)))
+                .thenThrow(new NotFoundException("No status found with id 1"));
+
+        mockMvc.perform(get("/status/1"))
+                .andExpect(status().isNotFound());
     }
 }

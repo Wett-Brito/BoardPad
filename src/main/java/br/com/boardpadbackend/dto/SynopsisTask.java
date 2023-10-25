@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
+import java.math.BigInteger;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class CategoryDto {
-    private Long id;
-    private String name;
+@Builder
+public class SynopsisTask {
+    private BigInteger id;
+    private String title;
 }

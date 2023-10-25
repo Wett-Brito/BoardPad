@@ -1,5 +1,7 @@
 package br.com.boardpadbackend.controllers;
 
+import br.com.boardpadbackend.dto.GenericResponseDTO;
+import br.com.boardpadbackend.dto.SynopsisStatus;
 import br.com.boardpadbackend.dto.TaskDto;
 import br.com.boardpadbackend.dto.inputs.TaskInputDto;
 import br.com.boardpadbackend.service.TaskService;
@@ -7,11 +9,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @RequestMapping(path = "/tasks")
@@ -44,7 +48,7 @@ public class TaskController {
             @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
     })
     @GetMapping
-    public List<TaskDto> list (@RequestParam("board-code") String boardCode){
+    public List<SynopsisStatus> list (@RequestParam("board-code") String boardCode){
         return taskService.listAllTasks(boardCode);
     }
 
@@ -52,7 +56,7 @@ public class TaskController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "Task/status don't found in board"),
-            @ApiResponse(code = 500, message = "Internal server error. Task wasn't created")
+            @ApiResponse(code = 500, message = "Internal server error. Task wasn't updated")
     })
     @PutMapping(path = "{task-id}/status")
     public void updateTask (@RequestParam("board-code") String boardCode,
@@ -74,5 +78,38 @@ public class TaskController {
         taskService.deleteTask(boardCode, taskId);
         
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation("Get Task By Id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Task found"),
+            @ApiResponse(code = 404, message = "Task not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @GetMapping(path = "{task-id}")
+    public ResponseEntity<GenericResponseDTO<TaskDto>> getTaskById (@PathVariable("task-id") BigInteger taskId){
+        TaskDto taskFound = taskService.getTaskById(taskId);
+        return ResponseEntity.ok(GenericResponseDTO
+                .<TaskDto>builder()
+                .status("Task found")
+                .response(taskFound)
+                .build());
+    }
+    @ApiOperation("Update Task By Id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Task updated with success"),
+            @ApiResponse(code = 404, message = "Task not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @PutMapping(path = "{task-id}")
+    public ResponseEntity<GenericResponseDTO<?>> updateTaskById(
+            @PathVariable("task-id") BigInteger taskId,
+            @RequestBody TaskInputDto inputDto
+    ) {
+        taskService.updateTaskById(taskId, inputDto);
+        return ResponseEntity.ok(GenericResponseDTO.builder()
+                .status("200 OK")
+                .message("Task updated successfully.")
+                .build());
     }
 }

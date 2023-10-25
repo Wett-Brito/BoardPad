@@ -1,28 +1,33 @@
 package br.com.boardpadbackend.service.impl;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import br.com.boardpadbackend.exceptions.BadRequestException;
+import br.com.boardpadbackend.converters.BoardDtoConverter;
+
+import br.com.boardpadbackend.dto.*;
 import br.com.boardpadbackend.exceptions.NotFoundException;
+import br.com.boardpadbackend.useCase.BoardTasksGrouping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.boardpadbackend.dto.BoardDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.repositories.BoardRepository;
 import br.com.boardpadbackend.service.BoardService;
 
 @Service
 public class BoardServiceImpl implements BoardService {
-
     private BoardRepository boardRepository;
+    private BoardTasksGrouping boardTasksGrouping;
 
     @Autowired
-    public BoardServiceImpl(BoardRepository boardRepository) {
+    public BoardServiceImpl(BoardRepository boardRepository, BoardTasksGrouping boardTasksGrouping) {
         this.boardRepository = boardRepository;
-
+        this.boardTasksGrouping = boardTasksGrouping;
     }
-
 
     @Override
     public BoardDto createBoard(String boardCode) {
@@ -35,8 +40,8 @@ public class BoardServiceImpl implements BoardService {
                         .build();
             }
             BoardEntity newBoardEntity = boardRepository.save(BoardEntity.builder()
-							.codeBoard(boardCode)
-							.build());
+                    .codeBoard(boardCode)
+                    .build());
 
             return BoardDto.builder()
                     .id(newBoardEntity.getIdBoard())
@@ -44,14 +49,21 @@ public class BoardServiceImpl implements BoardService {
                     .build();
 
         } catch (Exception e) {
-        	return null;
+            return null;
         }
     }
 
-    public BoardEntity findBoardByBoardCode(String boardCode) {
-        Optional<BoardEntity> foundBoard = boardRepository.findByCodeBoard(boardCode);
-        if(foundBoard.isEmpty()) throw new NotFoundException("The board [" + boardCode + "] doesn't exists.");
-        return foundBoard.get();
+    @Override
+    public BoardDto findBoardByBoardCode(String boardCode) {
+        var foundBoard = boardRepository.findByCodeBoard(boardCode);
+        if (foundBoard.isEmpty()) throw new NotFoundException("The board [" + boardCode + "] doesn't exists.");
+        return BoardDtoConverter.INSTANCE.entityToDto(foundBoard.get());
+    }
+
+    @Override
+    public BoardDto getBoardWithAllDataByBoardCode(String boardCode) {
+        var foundBoard = this.findBoardByBoardCode(boardCode);
+        return boardTasksGrouping.getBoard(foundBoard);
     }
 
 }

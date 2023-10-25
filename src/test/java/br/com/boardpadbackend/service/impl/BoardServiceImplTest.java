@@ -1,5 +1,6 @@
 package br.com.boardpadbackend.service.impl;
 
+import br.com.boardpadbackend.converters.BoardDtoConverter;
 import br.com.boardpadbackend.dto.BoardDto;
 import br.com.boardpadbackend.entity.BoardEntity;
 import br.com.boardpadbackend.exceptions.BadRequestException;
@@ -75,7 +76,7 @@ class BoardServiceImplTest {
 
         var boardServiceActualReturn = boardService.findBoardByBoardCode("board-test");
 
-        assertEquals(expectedBoardEntityReturn, boardServiceActualReturn);
+        assertEquals(BoardDtoConverter.INSTANCE.entityToDto(expectedBoardEntityReturn), boardServiceActualReturn);
     }
 
     @Test
